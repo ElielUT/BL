@@ -18,7 +18,7 @@ def inicio(correo:str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al recuperar usuario {e}")
     
-def recuperarID():
+def recuperarIDUsuario():
     try:
         id = _table().select(count=CountMethod.exact).execute()
         return {"id":id.count}
@@ -45,7 +45,7 @@ def actualizarUsuario(id:int, datos:dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al actualizar usuario")
     
-def eliminarUsuari(id:int):
+def eliminarUsuario(id:int):
     try:
         if not id:
             raise HTTPException(status_code=404, detail="ID faltante")
