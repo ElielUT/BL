@@ -11,7 +11,6 @@ class CrearUsuario(BaseModel):
     plantel:str = Field(max_length=10)
 
 class ActualizarUsuario(BaseModel):
-    id_usuario:int | None = Field(ge=0)
     nombre:str | None = Field(max_length=30)
     apellidos:str | None = Field(max_length=30)
     contraseña:str | None = Field(max_length=20)
