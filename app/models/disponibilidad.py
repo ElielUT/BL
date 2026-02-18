@@ -1,4 +1,4 @@
-rom pydantic import BaseModel, Field, ConfigDict, field_validator
+from pydantic import BaseModel, Field, ConfigDict, field_validator
 from datetime import date, time
 
 class CrearDisponibilidad(BaseModel):

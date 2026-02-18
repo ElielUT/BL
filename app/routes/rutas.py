@@ -18,6 +18,7 @@ from app.service.materia_service import (
     actualizar_impartir_db,
     eliminar_impartir_db,
 )
+from app.models.disponibilidad import CrearDisponibilidad
 
 
 router = APIRouter()
@@ -145,6 +146,6 @@ def obtener_disponibilidad(id_asesor: int = Path(..., ge=0)):
 
 # Crear una nueva disponibilidad (el botón de Guardar)
 @router.post("/disponibilidad", name="crearDisponibilidad")
-def crear_nueva_disponibilidad(data: CrearDisponibilidad):
+def crear_nueva_disponibilidad(data:CrearDisponibilidad):
     # Convertimos el modelo de Pydantic a diccionario para el service
     return crearDisponibilidad(data.model_dump())
