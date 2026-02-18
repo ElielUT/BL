@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Path, Query
 from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, ListaUsuario
+from app.service.disponibilidad_service import obtenerDisponibilidadPorAsesor, crearDisponibilidad
 from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios
 from app.models.asesor import CrearAsesor, ActualizarAsesor, ListaAsesor
 from app.service.asesor_service import eliminarAsesor, crearAsesor, actualizarAsesor, listarAsesores, buscarAsesorPorMateria, buscarAsesorPorAsesorNombre
@@ -136,3 +137,14 @@ def actualizar_Impartir(id_impartir:int, body:CrearImpartir):
 @router.delete("/impartir/{id_impartir}", name="eliminarImpartir")
 def eliminar_Impartir(id_impartir:int):
     return eliminar_impartir_db(id_impartir)
+# ------------ RUTAS DE DISPONIBILIDAD ---------------------------------
+# Obtener la disponibilidad de un asesor
+@router.get("/disponibilidad/{id_asesor}", name="obtenerDisponibilidad")
+def obtener_disponibilidad(id_asesor: int = Path(..., ge=0)):
+    return obtenerDisponibilidadPorAsesor(id_asesor)
+
+# Crear una nueva disponibilidad (el botón de Guardar)
+@router.post("/disponibilidad", name="crearDisponibilidad")
+def crear_nueva_disponibilidad(data: CrearDisponibilidad):
+    # Convertimos el modelo de Pydantic a diccionario para el service
+    return crearDisponibilidad(data.model_dump())
