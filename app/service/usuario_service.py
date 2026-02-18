@@ -68,3 +68,10 @@ def listarUsuarios():
         return {"items":res.data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al listar usuarios {e}")
+
+def buscarUsuarioID(id:int):
+    try:
+        res = _table().select("*").eq("id_usuario", int(id)).execute()
+        return {"items":res.data[0] if res.data else None}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al buscar usuario {e}")

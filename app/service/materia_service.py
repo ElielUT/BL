@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from modelos.materia import Materia, Impartir
-from modelos.asesor import Asesor # Importante para validar que el asesor existe
+from app.models.materia import Materia, Impartir
+from app.models.asesor import Asesor # Importante para validar que el asesor existe
 from fastapi import HTTPException
 
 def crear_materia_db(db: Session, materia_schema):

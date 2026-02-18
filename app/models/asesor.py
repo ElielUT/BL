@@ -1,7 +1,6 @@
 from pydantic import BaseModel, Field
 
 class CrearAsesor(BaseModel):
-    id_asesor:int = Field(ge=0)
     id_usuario2:int = Field(ge=0)
     carrera:str = Field(max_length=150)
     disponible:bool

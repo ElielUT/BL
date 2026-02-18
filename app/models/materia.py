@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
-from centro.supabase_client import Base # Usamos la base que ya tienen en centro
+from app.core.supabase_client import Base # Usamos la base que ya tienen en centro
 
 class Materia(Base):
     __tablename__ = "materia"
