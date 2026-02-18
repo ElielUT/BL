@@ -2,6 +2,10 @@ from fastapi import APIRouter, Path, Query
 from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, ListaUsuario
 from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios
 from app.service.encryptar import descifrar
+from sqlalchemy.orm import Session
+from centro.supabase_client import get_db
+from schemas import ImpartirBase, Impartir
+from servicio.materia_service import servicio_asignar_materia_asesor
 
 router = APIRouter()
 
@@ -43,3 +47,10 @@ def mostrar_Usuarios():
 @router.get("/buscarUsuarios/{nombre}", response_model=ListaUsuario, name="buscarUsuarios")
 def buscar_Usuarios(nombre:str):
     return buscarUsuarios(nombre)
+
+@router.post("/impartir/", response_model=Impartir, tags=["Asignaciones"])
+async def crear_asignacion(datos: ImpartirBase, db: Session = Depends(get_db)):
+    """
+    Crea una relación entre un asesor y una materia.
+    """
+    return servicio_asignar_materia_asesor(db, datos)
