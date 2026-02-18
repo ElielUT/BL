@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Path, Query
-from app.models.usuario import CrearUsuario, ActualizarUsuario, RecuperarUsuarios, IniciarUsuario, ListaUsuario, SoloUsuario
-from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario
+from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, ListaUsuario
+from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios
 from app.service.encryptar import descifrar
 
 router = APIRouter()
@@ -35,3 +35,11 @@ def eliminar_Usuario(id_usuario:int):
 @router.put("/actualizarUsuario/{id_usurio}", response_model=ActualizarUsuario, name="actualizarUsuario")
 def actualizar_Usuario(id_usuario:int, body:ActualizarUsuario):
     return actualizarUsuario(id_usuario, body.model_dump(exclude_none=True))
+
+@router.get("/mostraUsuarios", response_model=ListaUsuario, name="mostrarUsuarios")
+def mostrar_Usuarios():
+    return listarUsuarios()
+
+@router.get("/buscarUsuarios/{nombre}", response_model=ListaUsuario, name="buscarUsuarios")
+def buscar_Usuarios(nombre:str):
+    return buscarUsuarios(nombre)

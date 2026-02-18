@@ -2,7 +2,6 @@ from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from app.core.supabase_client import get_supabase
 from app.core.config import config
-from postgrest import CountMethod
 from app.service.encryptar import cifrar
 
 def _table():
@@ -37,7 +36,7 @@ def actualizarUsuario(id:int, datos:dict):
     try:
         if not datos or not id:
             raise HTTPException(status_code=404, detail="Datos incompletos")
-        if "data" in datos:
+        if "contraseña" in datos:
             cnc = datos["contraseña"]
             cc = cifrar(cnc)
             datos["contraseña"] = cc
@@ -52,5 +51,20 @@ def eliminarUsuario(id:int):
         if not id:
             raise HTTPException(status_code=404, detail="ID faltante")
         res= _table().delete().eq("id_usuario", int(id)).execute()
+        return {"items":res.data[0] if res.data else None}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al eliminar el usuario {e}")
+
+def buscarUsuarios(nombre:str):
+    try:
+        res = _table().select("*").eq("nombre", f"%{nombre}%").execute()
+        return {"items":res.data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al buscar usuarios {e}")
+
+def listarUsuarios():
+    try:
+        res = _table().select("*").execute()
+        return {"items":res.data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al listar usuarios {e}")

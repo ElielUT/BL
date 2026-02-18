@@ -12,12 +12,12 @@ class CrearUsuario(BaseModel):
     plantel:str = Field(max_length=10)
 
 class ActualizarUsuario(BaseModel):
-    nombres:str | None = Field(max_length=30)
-    apellidos:str | None = Field(max_length=30)
-    contraseña:str | None = Field()
-    categoria:str | None = Field(max_length=15)
-    cuatrimestre:str | None = Field(max_length=25)
-    plantel:str | None = Field(max_length=10)
+    nombres:str | None = Field(default=None, max_length=30)
+    apellidos:str | None = Field(default=None, max_length=30)
+    contraseña:str | None = Field(default=None)
+    categoria:str | None = Field(default=None, max_length=15)
+    cuatrimestre:int | None = Field(default=None, le=11, ge=1)
+    plantel:str | None = Field(default=None, max_length=10)
 
 class RecuperarUsuarios(BaseModel):
     id_usuario:int
@@ -25,7 +25,7 @@ class RecuperarUsuarios(BaseModel):
     nombres:str
     apellidos:str
     categoria:str
-    cuatrimestre:str
+    cuatrimestre:int
     plantel:str
 
 class IniciarUsuario(BaseModel):
