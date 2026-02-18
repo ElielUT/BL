@@ -1,11 +1,15 @@
-from sqlalchemy import Column, Integer, ForeignKey
-from centro.supabase_client import Base 
+from sqlalchemy import Column, Integer, String, ForeignKey
+from centro.supabase_client import Base # Usamos la base que ya tienen en centro
+
+class Materia(Base):
+    __tablename__ = "materia"
+    id_materia = Column(Integer, primary_key=True, index=True)
+    nombre = Column(String)
+    carrera = Column(String)
+    cuatrimestre = Column(Integer)
 
 class Impartir(Base):
     __tablename__ = "impartir"
-
     id_impartir = Column(Integer, primary_key=True, index=True)
-    # id_materia2 debe coincidir con el nombre en tu diagrama ERD
-    id_materia2 = Column(Integer, ForeignKey("materia.id_materia"), nullable=False)
-    # id_asesor2 apunta a la tabla asesor
-    id_asesor2 = Column(Integer, ForeignKey("asesor.id_asesor"), nullable=False)
+    id_materia2 = Column(Integer, ForeignKey("materia.id_materia"))
+    id_asesor2 = Column(Integer, ForeignKey("asesor.id_asesor"))
