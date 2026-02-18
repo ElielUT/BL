@@ -94,7 +94,10 @@ def obtener_impartir_db(id:int):
         res = _table_impartir().select("*").eq("id_impartir", int(id)).execute()
         return {"items": res.data[0] if res.data else None}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error al obtener impartir: {e}")
+        import traceback
+        tb = traceback.format_exc()
+        print(f"DEBUG obtener_impartir_db: {e}\n{tb}")
+        raise HTTPException(status_code=500, detail=f"Error al obtener impartir: {str(e)}\n{tb}")
 
 def actualizar_impartir_db(id:int, datos:dict):
     try:
@@ -113,4 +116,7 @@ def eliminar_impartir_db(id:int):
         res = _table_impartir().delete().eq("id_impartir", int(id)).execute()
         return {"items": res.data[0] if res.data else None}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error al eliminar impartir: {e}")
+        import traceback
+        tb = traceback.format_exc()
+        print(f"DEBUG eliminar_impartir_db: {e}\n{tb}")
+        raise HTTPException(status_code=500, detail=f"Error al eliminar impartir: {str(e)}\n{tb}")
