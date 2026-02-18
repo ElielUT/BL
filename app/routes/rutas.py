@@ -63,13 +63,13 @@ def crear_Asesor(body:CrearAsesor):
 """
 Routes de Materias
 """
-@router.post("/crearMateria", response_model=CrearMateria, name="crearMateria")
+@router.post("/materias/crear", response_model=CrearMateria, name="crearMateria")
 def crear_Materia(body:CrearMateria):
     return crear_materia_db(body.model_dump())
 
 """
 Routes de Impartir
 """
-@router.post("/asignarImpartir", response_model=CrearImpartir, name="asignarImpartir")
+@router.post("/impartir/asignar", response_model=CrearImpartir, name="asignarImpartir")
 def asignar_Impartir(body:CrearImpartir):
     return asignar_impartir_db(body.model_dump())
