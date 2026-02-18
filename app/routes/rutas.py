@@ -2,10 +2,6 @@ from fastapi import APIRouter, Path, Query, Depends
 from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, ListaUsuario
 from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios
 from app.service.encryptar import descifrar
-from sqlalchemy.orm import Session
-from app.core.supabase_client import get_db
-from app.models.materia import MateriaBase, Materia, ImpartirBase, Impartir
-from app.service.materia_service import crear_materia_db, asignar_impartir_db
 from app.models.asesor import CrearAsesor
 from app.service.asesor_service import crearAsesor
 
