@@ -2,7 +2,6 @@ from fastapi import APIRouter, Path, Query
 from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, ListaUsuario
 from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios
 from app.service.encryptar import descifrar
-from app.core.supabase_client import get_db
 from app.models.materia import CrearMateria, RecuperarMateria, CrearImpartir, RecuperarImpartir
 from app.service.materia_service import crear_materia_db, asignar_impartir_db
 from app.models.asesor import CrearAsesor
