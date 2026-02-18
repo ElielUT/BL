@@ -1,12 +1,21 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from app.core.supabase_client import Base # Usamos la base que ya tienen en centro
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
-class MateriaBase(BaseModel):
+class CrearMateria(BaseModel):
+    nombre: str = Field(min_length=1)
+    carrera: str = Field(min_length=1)
+    cuatrimestre: int = Field(ge=1)
+
+class CrearImpartir(BaseModel):
+    id_materia2: int = Field(ge=0)
+    id_asesor2: int = Field(ge=0)
+    
+class RecuperarMateria(BaseModel):
+    id_materia: int
     nombre: str
     carrera: str
     cuatrimestre: int
 
-class ImpartirBase(BaseModel):
+class RecuperarImpartir(BaseModel):
+    id_impartir: int
     id_materia2: int
     id_asesor2: int

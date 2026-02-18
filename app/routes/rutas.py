@@ -1,10 +1,8 @@
-from fastapi import APIRouter, Path, Query, Depends
+from fastapi import APIRouter, Path, Query
 from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, ListaUsuario
 from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios
 from app.service.encryptar import descifrar
-from sqlalchemy.orm import Session
-from app.core.supabase_client import get_db
-from app.models.materia import MateriaBase, Materia, ImpartirBase, Impartir
+from app.models.materia import CrearMateria, RecuperarMateria, CrearImpartir, RecuperarImpartir
 from app.service.materia_service import crear_materia_db, asignar_impartir_db
 from app.models.asesor import CrearAsesor
 from app.service.asesor_service import crearAsesor
@@ -65,10 +63,10 @@ def crear_Asesor(body:CrearAsesor):
 """
 Routes de Materias
 """
-@router.post("/materias/", response_model=Materia, tags=["Materias"])
-def post_materia(materia: MateriaBase, db: Session = Depends(get_db)):
-    return crear_materia_db(db, materia)
+@router.post("/materias/", response_model=RecuperarMateria, tags=["Materias"])
+def post_materia(materia: CrearMateria):
+    return crear_materia_db(materia.model_dump())
 
-@router.post("/impartir/", response_model=Impartir, tags=["Asignaciones"])
-def post_impartir(datos: ImpartirBase, db: Session = Depends(get_db)):
-    return asignar_impartir_db(db, datos)
+@router.post("/impartir/", response_model=RecuperarImpartir, tags=["Asignaciones"])
+def post_impartir(datos: CrearImpartir):
+    return asignar_impartir_db(datos.model_dump())
