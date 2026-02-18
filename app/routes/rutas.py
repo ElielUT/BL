@@ -4,7 +4,14 @@ from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, a
 from app.service.encryptar import descifrar
 from app.core.supabase_client import get_db
 from app.models.materia import CrearMateria, RecuperarMateria, CrearImpartir, RecuperarImpartir
-from app.service.materia_service import crear_materia_db, asignar_impartir_db
+from app.service.materia_service import (
+    crear_materia_db,
+    asignar_impartir_db,
+    listar_materias_db,
+    obtener_materia_db,
+    actualizar_materia_db,
+    eliminar_materia_db,
+)
 from app.models.asesor import CrearAsesor
 from app.service.asesor_service import crearAsesor
 
@@ -66,6 +73,22 @@ Routes de Materias
 @router.post("/materias/crear", response_model=CrearMateria, name="crearMateria")
 def crear_Materia(body:CrearMateria):
     return crear_materia_db(body.model_dump())
+
+@router.get("/materias", name="listarMaterias")
+def listar_Materias():
+    return listar_materias_db()
+
+@router.get("/materias/{id_materia}", name="obtenerMateria")
+def obtener_Materia(id_materia:int = Path(..., ge=1)):
+    return obtener_materia_db(id_materia)
+
+@router.put("/materias/{id_materia}", name="actualizarMateria")
+def actualizar_Materia(id_materia:int, body:CrearMateria):
+    return actualizar_materia_db(id_materia, body.model_dump(exclude_none=True))
+
+@router.delete("/materias/{id_materia}", name="eliminarMateria")
+def eliminar_Materia(id_materia:int):
+    return eliminar_materia_db(id_materia)
 
 """
 Routes de Impartir

@@ -48,3 +48,36 @@ def asignar_impartir_db(datos: dict):
         return res.data[0] if res.data else None
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al asignar materia: {e}")
+
+def listar_materias_db():
+    try:
+        res = _table_materia().select("*").execute()
+        return {"items": res.data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al listar materias: {e}")
+
+def obtener_materia_db(id:int):
+    try:
+        res = _table_materia().select("*").eq("id_materia", int(id)).execute()
+        return {"items": res.data[0] if res.data else None}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al obtener materia: {e}")
+
+def actualizar_materia_db(id:int, datos:dict):
+    try:
+        if not datos or not id:
+            raise HTTPException(status_code=404, detail="Datos incompletos")
+        datos = jsonable_encoder(datos)
+        res = _table_materia().update(datos).eq("id_materia", int(id)).execute()
+        return {"items": res.data[0] if res.data else None}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al actualizar materia: {e}")
+
+def eliminar_materia_db(id:int):
+    try:
+        if not id:
+            raise HTTPException(status_code=404, detail="ID faltante")
+        res = _table_materia().delete().eq("id_materia", int(id)).execute()
+        return {"items": res.data[0] if res.data else None}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al eliminar materia: {e}")
