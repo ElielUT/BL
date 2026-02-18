@@ -4,8 +4,8 @@ from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, a
 from app.service.encryptar import descifrar
 from sqlalchemy.orm import Session
 from centro.supabase_client import get_db
-from schemas import ImpartirBase, Impartir
-from servicio.materia_service import servicio_asignar_materia_asesor
+from schemas import MateriaBase, Materia, ImpartirBase, Impartir
+from servicio.materia_service import crear_materia_db, asignar_impartir_db
 
 router = APIRouter()
 
@@ -48,9 +48,10 @@ def mostrar_Usuarios():
 def buscar_Usuarios(nombre:str):
     return buscarUsuarios(nombre)
 
+@router.post("/materias/", response_model=Materia, tags=["Materias"])
+def post_materia(materia: MateriaBase, db: Session = Depends(get_db)):
+    return crear_materia_db(db, materia)
+
 @router.post("/impartir/", response_model=Impartir, tags=["Asignaciones"])
-async def crear_asignacion(datos: ImpartirBase, db: Session = Depends(get_db)):
-    """
-    Crea una relación entre un asesor y una materia.
-    """
-    return servicio_asignar_materia_asesor(db, datos)
+def post_impartir(datos: ImpartirBase, db: Session = Depends(get_db)):
+    return asignar_impartir_db(db, datos)
