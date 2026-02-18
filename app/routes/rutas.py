@@ -60,3 +60,16 @@ Routes de Asesores
 def crear_Asesor(body:CrearAsesor):
     return crearAsesor(body.model_dump())
 
+"""
+Routes de Materias
+"""
+@router.post("/crearMateria", response_model=CrearMateria, name="crearMateria")
+def crear_Materia(body:CrearMateria):
+    return crear_materia_db(body.model_dump())
+
+"""
+Routes de Impartir
+"""
+@router.post("/asignarImpartir", response_model=CrearImpartir, name="asignarImpartir")
+def asignar_Impartir(body:CrearImpartir):
+    return asignar_impartir_db(body.model_dump())
