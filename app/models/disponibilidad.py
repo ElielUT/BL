@@ -5,15 +5,15 @@ class CrearDisponibilidad(BaseModel):
     model_config = ConfigDict(title="Crear Disponibilidad")
 
     # Forzamos a que tengan al menos 4 caracteres (valor >= 1000)
-    id_horario: int = Field(ge=1000)
-    id_asesor1: int = Field(ge=1000)
+    id_horario: int = Field(ge=1, le=9999)
+    id_asesor1: int = Field(ge=1, le=9999)
     dia: date
-    hora_inicio: time
+    hora_in: time
     hora_fin: time
 
     # --- Validaciones de tiempo ---
 
-    @field_validator('hora_inicio', 'hora_fin')
+    @field_validator('hora_in', 'hora_fin')
     @classmethod
     def validar_30_minutos(cls, v: time):
         if v.minute not in [0, 30]:
@@ -23,7 +23,7 @@ class CrearDisponibilidad(BaseModel):
     @field_validator('hora_fin')
     @classmethod
     def validar_orden(cls, v: time, info):
-        inicio = info.data.get('hora_inicio')
+        inicio = info.data.get('hora_in')
         if inicio and v <= inicio:
             raise ValueError("La hora de fin debe ser después del inicio")
         return v

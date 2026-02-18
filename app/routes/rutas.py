@@ -2,8 +2,8 @@ from fastapi import APIRouter, Path, Query
 from app.models.asesoria import ActualizarAsesoria, CrearAsesoria, ListaAsesoria, SoloAsesoria
 from app.models.toma import CrearToma, ListaToma
 from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, ListaUsuario
-from app.service.asesoria_service import actualizarAsesoria, crearAsesoria, eliminarAsesoria
-from app.service.toma_service import crearToma
+from app.service.disponibilidad_service import obtenerDisponibilidadPorAsesor, crearDisponibilidad
+from app.models.disponibilidad import CrearDisponibilidad
 from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios
 from app.models.asesor import CrearAsesor, ActualizarAsesor, ListaAsesor, SoloAsesor 
 from app.service.asesor_service import eliminarAsesor, crearAsesor, actualizarAsesor, listarAsesores, buscarAsesorPorMateria, buscarAsesorPorAsesorNombre, buscarAsesorPorAsesorID
@@ -24,8 +24,10 @@ from app.service.materia_service import (
     actualizar_impartir_db,
     eliminar_impartir_db,
 )
-from app.models.asesor import CrearAsesor
-from app.service.asesor_service import crearAsesor
+
+# Importaciones para las rutas de Toma y Asesoría
+from app.service.toma_service import crearToma
+from app.service.asesoria_service import crearAsesoria, eliminarAsesoria, actualizarAsesoria
 
 
 router = APIRouter()
@@ -175,8 +177,9 @@ def eliminar_Impartir(id_impartir:int):
 def obtener_disponibilidad(id_asesor: int = Path(..., ge=0)):
     return obtenerDisponibilidadPorAsesor(id_asesor)
 
-# Crear una nueva disponibilidad (el botón de Guardar)
-@router.post("/disponibilidad", name="crearDisponibilidad")
-def crear_nueva_disponibilidad(data:CrearDisponibilidad):
-    # Convertimos el modelo de Pydantic a diccionario para el service
+# Crear una nueva disponibilidad
+@router.post("/disponibilidad", name="CrearDisponibilidad")
+def crear_nueva_disponibilidad(data: CrearDisponibilidad):
+    # Llamamos a la función del SERVICE pasándole el diccionario de datos
     return crearDisponibilidad(data.model_dump())
+# ------------------------------------------------------------------------

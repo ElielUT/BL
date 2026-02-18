@@ -19,13 +19,13 @@ def crearDisponibilidad(data: dict):
         existente = _table().select("*") \
             .eq("id_asesor1", data.get("id_asesor1")) \
             .eq("dia", str(data.get("dia"))) \
-            .eq("hora_inicio", str(data.get("hora_inicio"))) \
+            .eq("hora_in", str(data.get("hora_in"))) \
             .execute()
 
         if existente.data:
             raise HTTPException(
                 status_code=400, 
-                detail=f"El asesor ya tiene este horario registrado (Día: {data.get('dia')}, Hora: {data.get('hora_inicio')})"
+                detail=f"El asesor ya tiene este horario registrado (Día: {data.get('dia')}, Hora: {data.get('hora_in')})"
             )
 
         # 2. INSERCIÓN:
