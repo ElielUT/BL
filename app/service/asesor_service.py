@@ -17,7 +17,7 @@ def crearAsesor(data:dict):
             raise HTTPException(status_code=404, detail="Usuario no encontrado")
         data = jsonable_encoder(data)
         res = _table().insert(data).execute()
-        return {"items":res.data[0] if res.data else None}
+        return res.data[0] if res.data else None
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al crear el Asesor {e}")
     

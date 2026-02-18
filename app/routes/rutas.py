@@ -70,6 +70,9 @@ Routes de Asesores
 def crear_Asesor(body:CrearAsesor):
     return crearAsesor(body.model_dump())
 
+
+
+
 """
 Routes de Materias
 """
