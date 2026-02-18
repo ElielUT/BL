@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Path, Query
+from app.models.asesoria import ActualizarAsesoria, CrearAsesoria, ListaAsesoria, SoloAsesoria
 from app.models.toma import CrearToma, ListaToma
 from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, ListaUsuario
+from app.service.asesoria_service import actualizarAsesoria, crearAsesoria, eliminarAsesoria
 from app.service.toma_service import crearToma
 from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios
 from app.service.encryptar import descifrar
@@ -88,4 +90,22 @@ def buscar_TomaAsesoria(id_asesoria:int):
 """
 Routes de Asesoria
 """
+@router.post("/asesoria/crearAsesoria", response_model=CrearAsesoria, name="crearAsesoria")
+def crear_Asesoria(body:CrearAsesoria):
+    return crearAsesoria(body.model_dump())
 
+@router.get("/asesoria/eliminarAsesoria/{id_asesoria}", name="eliminarAsesoria")
+def eliminar_Asesoria(id_asesoria:int):
+    return eliminarAsesoria(id_asesoria)
+
+@router.put("/asesoria/actualizarAsesoria/{id_asesoria}", response_model=ActualizarAsesoria, name="actualizarAsesoria")
+def actualizar_Asesoria(id_asesoria:int, body:ActualizarAsesoria):
+    return actualizarAsesoria(id_asesoria, body.model_dump(exclude_none=True))
+
+@router.get("/asesoria/mostrarAsesoria", response_model=ListaAsesoria, name="mostrarAsesoria")
+def mostrar_Asesoria():
+    return mostrar_Asesoria()
+
+@router.get("/asesoria/buscarAsesoria/{id_asesoria}", response_model=SoloAsesoria, name="buscarAsesoria")
+def buscar_Asesoria(id_asesoria:int):
+    return buscar_Asesoria(id_asesoria)
