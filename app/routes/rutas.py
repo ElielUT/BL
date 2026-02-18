@@ -10,6 +10,10 @@ from app.service.materia_service import (
     obtener_materia_db,
     actualizar_materia_db,
     eliminar_materia_db,
+    listar_impartir_db,
+    obtener_impartir_db,
+    actualizar_impartir_db,
+    eliminar_impartir_db,
 )
 from app.models.asesor import CrearAsesor
 from app.service.asesor_service import crearAsesor
@@ -95,3 +99,19 @@ Routes de Impartir
 @router.post("/impartir/asignar", response_model=CrearImpartir, name="asignarImpartir")
 def asignar_Impartir(body:CrearImpartir):
     return asignar_impartir_db(body.model_dump())
+
+@router.get("/impartir", name="listarImpartir")
+def listar_Impartir():
+    return listar_impartir_db()
+
+@router.get("/impartir/{id_impartir}", name="obtenerImpartir")
+def obtener_Impartir(id_impartir:int = Path(..., ge=1)):
+    return obtener_impartir_db(id_impartir)
+
+@router.put("/impartir/{id_impartir}", name="actualizarImpartir")
+def actualizar_Impartir(id_impartir:int, body:CrearImpartir):
+    return actualizar_impartir_db(id_impartir, body.model_dump(exclude_none=True))
+
+@router.delete("/impartir/{id_impartir}", name="eliminarImpartir")
+def eliminar_Impartir(id_impartir:int):
+    return eliminar_impartir_db(id_impartir)
