@@ -14,6 +14,7 @@ class Config(BaseSettings):
     supabase_imparte:str = Field(..., alias="SUPABASE_IMPARTE")
     supabase_toma:str = Field(..., alias= "SUPABASE_TOMA")
     supabase_horario:str = Field(..., alias="SUPABASE_HORARIO")
+    encrypto_key: str = Field(..., alias="ENCRYPTION_KEY")
 
     model_config = SettingsConfigDict(
         env_file= ".env",
