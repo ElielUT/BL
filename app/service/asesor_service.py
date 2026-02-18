@@ -3,6 +3,8 @@ from fastapi.encoders import jsonable_encoder
 from app.core.supabase_client import get_supabase
 from app.core.config import config
 from app.service.usuario_service import buscarUsuarioID
+from app.service.materia_service import buscarMateriaNombre, buscarImpartirPorMateria
+from app.service.usuario_service import buscarUsuarios
 
 def _table():
     sb = get_supabase()
@@ -39,3 +41,37 @@ def eliminarAsesor(id:int):
         return {"items":res.data[0] if res.data else None}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al eliminar el Asesor {e}")
+
+def listarAsesores():
+    try:
+        res = _table().select("*").execute()
+        return {"items":res.data if res.data else None}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al listar los Asesores {e}")
+
+def buscarAsesorPorMateria(materia:str):
+    try:
+        if not materia:
+            raise HTTPException(status_code=404, detail="Datos incompletos")
+        resMat = buscarMateriaNombre(materia)
+        if not resMat:
+            raise HTTPException(status_code=404, detail="Materia no encontrada")
+        resImp = buscarImpartirPorMateria(resMat["id_materia"])
+        if not resImp:
+            raise HTTPException(status_code=404, detail="Impartir no encontrado")
+        res = _table().select("*").eq("id_asesor", resImp["id_asesor2"]).execute()
+        return {"items":res.data if res.data else None}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al buscar el Asesor {e}")
+
+def buscarAsesorPorAsesorNombre(usuario:str):
+    try:
+        if not usuario:
+            raise HTTPException(status_code=404, detail="Datos incompletos")
+        resUs = buscarUsuarios(usuario)
+        if not resUs:
+            raise HTTPException(status_code=404, detail="Usuario no encontrado")
+        res = _table().select("*").eq("id_usuario2", resUs["items"][0]["id_usuario"]).execute()
+        return {"items":res.data if res.data else None}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al buscar el Asesor {e}")

@@ -57,7 +57,9 @@ def eliminarUsuario(id:int):
 
 def buscarUsuarios(nombre:str):
     try:
-        res = _table().select("*").eq("nombre", f"%{nombre}%").execute()
+        print(nombre)
+        res = _table().select("*").eq("nombres", nombre or f"%{nombre}%" or f"%{nombre}" or f"{nombre}%" ).execute()
+        print(res.data)
         return {"items":res.data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al buscar usuarios {e}")

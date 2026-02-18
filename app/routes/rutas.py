@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Path, Query
 from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, ListaUsuario
 from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios
+from app.models.asesor import CrearAsesor, ActualizarAsesor, ListaAsesor
+from app.service.asesor_service import eliminarAsesor, crearAsesor, actualizarAsesor, listarAsesores, buscarAsesorPorMateria, buscarAsesorPorAsesorNombre
 from app.service.encryptar import descifrar
 from app.models.materia import CrearMateria, RecuperarMateria, CrearImpartir, RecuperarImpartir
 from app.service.materia_service import (
@@ -15,8 +17,6 @@ from app.service.materia_service import (
     actualizar_impartir_db,
     eliminar_impartir_db,
 )
-from app.models.asesor import CrearAsesor
-from app.service.asesor_service import crearAsesor
 
 
 router = APIRouter()
@@ -70,7 +70,25 @@ Routes de Asesores
 def crear_Asesor(body:CrearAsesor):
     return crearAsesor(body.model_dump())
 
+@router.get("/asesores/eliminarAsesor/{id_asesor}", name="eliminarAsesor")
+def eliminar_Asesor(id_asesor:int):
+    return eliminarAsesor(id_asesor)
 
+@router.put("/asesores/actualizarAsesor/{id_asesor}", response_model=ActualizarAsesor, name="actualizarAsesor")
+def actualizar_Asesor(id_asesor:int, body:ActualizarAsesor):
+    return actualizarAsesor(id_asesor, body.model_dump(exclude_none=True))
+
+@router.get("/asesores/listarAsesores", response_model=ListaAsesor, name="listarAsesores")
+def listar_Asesores():
+    return listarAsesores()
+
+@router.get("/asesores/buscarAsesorMateria/{materia}", response_model=ListaAsesor, name="buscarAsesorMateria")
+def buscar_Asesor(materia:str):
+    return buscarAsesorPorMateria(materia)
+
+@router.get("/asesores/buscarAsesorUsuario/{usuario}", response_model=ListaAsesor, name="buscarAsesorUsuario")
+def buscar_AsesorUsuario(usuario:str):
+    return buscarAsesorPorAsesorNombre(usuario)
 
 
 """
