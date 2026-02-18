@@ -1,27 +1,30 @@
 from sqlalchemy.orm import Session
-from modelos.materia import Impartir, Materia
-from modelos.asesor import Asesor # Asegúrate de importar el modelo de asesor
+from modelos.materia import Materia, Impartir
+from modelos.asesor import Asesor # Importante para validar que el asesor existe
 from fastapi import HTTPException
 
-def servicio_asignar_materia_asesor(db: Session, datos_impartir):
-    # 1. Validar que la materia existe
-    if not db.query(Materia).filter(Materia.id_materia == datos_impartir.id_materia2).first():
-        raise HTTPException(status_code=404, detail="La materia no existe")
-
-    # 2. Validar que el asesor existe
-    if not db.query(Asesor).filter(Asesor.id_asesor == datos_impartir.id_asesor2).first():
-        raise HTTPException(status_code=404, detail="El asesor no existe")
-
-    # 3. Evitar duplicados (que el mismo asesor imparta la misma materia dos veces)
-    existe = db.query(Impartir).filter(
-        Impartir.id_materia2 == datos_impartir.id_materia2,
-        Impartir.id_asesor2 == datos_impartir.id_asesor2
-    ).first()
+def crear_materia_db(db: Session, materia_schema):
+    # Validar que no exista el mismo nombre
+    existe = db.query(Materia).filter(Materia.nombre == materia_schema.nombre).first()
     if existe:
-        raise HTTPException(status_code=400, detail="Esta asignación ya existe")
-
-    nueva_asignacion = Impartir(**datos_impartir.model_dump())
-    db.add(nueva_asignacion)
+        raise HTTPException(status_code=400, detail="Materia ya registrada")
+    
+    nueva = Materia(**materia_schema.model_dump())
+    db.add(nueva)
     db.commit()
-    db.refresh(nueva_asignacion)
-    return nueva_asignacion
+    db.refresh(nueva)
+    return nueva
+
+def asignar_impartir_db(db: Session, impartir_schema):
+    # Validar que existan ambos IDs antes de crear la relación
+    m_existe = db.query(Materia).filter(Materia.id_materia == impartir_schema.id_materia2).first()
+    a_existe = db.query(Asesor).filter(Asesor.id_asesor == impartir_schema.id_asesor2).first()
+    
+    if not m_existe or not a_existe:
+        raise HTTPException(status_code=404, detail="Materia o Asesor no encontrados")
+        
+    nueva_relacion = Impartir(**impartir_schema.model_dump())
+    db.add(nueva_relacion)
+    db.commit()
+    db.refresh(nueva_relacion)
+    return nueva_relacion
