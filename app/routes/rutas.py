@@ -127,4 +127,3 @@ def obtener_disponibilidad(id_asesor: int = Path(..., ge=0)):
 def crear_nueva_disponibilidad(data: CrearDisponibilidad):
     # Convertimos el modelo de Pydantic a diccionario para el service
     return crearDisponibilidad(data.model_dump())
-------------------------------------------------------------------------
