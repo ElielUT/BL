@@ -2,8 +2,8 @@ from fastapi import APIRouter, Path, Query
 from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, ListaUsuario
 from app.service.disponibilidad_service import obtenerDisponibilidadPorAsesor, crearDisponibilidad
 from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios
-from app.models.asesor import CrearAsesor, ActualizarAsesor, ListaAsesor
-from app.service.asesor_service import eliminarAsesor, crearAsesor, actualizarAsesor, listarAsesores, buscarAsesorPorMateria, buscarAsesorPorAsesorNombre
+from app.models.asesor import CrearAsesor, ActualizarAsesor, ListaAsesor, SoloAsesor 
+from app.service.asesor_service import eliminarAsesor, crearAsesor, actualizarAsesor, listarAsesores, buscarAsesorPorMateria, buscarAsesorPorAsesorNombre, buscarAsesorPorAsesorID
 from app.service.encryptar import descifrar
 from app.models.materia import CrearMateria, RecuperarMateria, CrearImpartir, RecuperarImpartir
 from app.service.materia_service import (
@@ -91,6 +91,10 @@ def buscar_Asesor(materia:str):
 @router.get("/asesores/buscarAsesorUsuario/{usuario}", response_model=ListaAsesor, name="buscarAsesorUsuario")
 def buscar_AsesorUsuario(usuario:str):
     return buscarAsesorPorAsesorNombre(usuario)
+
+@router.get("/asesores/buscarAsesorID/{id_asesor}", response_model=SoloAsesor, name="buscarAsesorID")
+def buscar_AsesorID(id_asesor:int):
+    return buscarAsesorPorAsesorID(id_asesor)
 
 
 """

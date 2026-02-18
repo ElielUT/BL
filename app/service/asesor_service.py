@@ -75,3 +75,12 @@ def buscarAsesorPorAsesorNombre(usuario:str):
         return {"items":res.data if res.data else None}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al buscar el Asesor {e}")
+
+def buscarAsesorPorAsesorID(id:int):
+    try:
+        if not id:
+            raise HTTPException(status_code=404, detail="Datos incompletos")
+        res = _table().select("*").eq("id_asesor", int(id)).execute()
+        return {"items":res.data if res.data else None}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al buscar el Asesor {e}")
