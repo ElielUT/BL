@@ -182,4 +182,4 @@ def obtener_disponibilidad(id_asesor: int = Path(..., ge=0)):
 def crear_nueva_disponibilidad(data: CrearDisponibilidad):
     # Llamamos a la función del SERVICE pasándole el diccionario de datos
     return crearDisponibilidad(data.model_dump())
-# ------------------------------------------------------------------------
+#------------------------------------------------------------------------
