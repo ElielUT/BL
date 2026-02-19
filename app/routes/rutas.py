@@ -8,7 +8,9 @@ from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, a
 from app.models.asesor import CrearAsesor, ActualizarAsesor, ListaAsesor, SoloAsesor 
 from app.service.asesor_service import eliminarAsesor, crearAsesor, actualizarAsesor, listarAsesores, buscarAsesorPorMateria, buscarAsesorPorAsesorNombre, buscarAsesorPorAsesorID
 from app.service.encryptar import descifrar
-from app.core.supabase_client import get_db
+from app.models.disponibilidad import CrearDisponibilidad
+from app.service.disponibilidad_service import obtenerDisponibilidadPorAsesor, crearDisponibilidad
+#from app.core.supabase_client import get_db
 from app.models.materia import CrearMateria, RecuperarMateria, CrearImpartir, RecuperarImpartir
 from app.service.materia_service import (
     crear_materia_db,
@@ -101,6 +103,30 @@ def buscar_AsesorUsuario(usuario:str):
 def buscar_AsesorID(id_asesor:int):
     return buscarAsesorPorAsesorID(id_asesor)
 
+"""
+Routes de Materias
+"""
+@router.post("/materias/crear", response_model=CrearMateria, name="crearMateria")
+def crear_Materia(body:CrearMateria):
+    return crear_materia_db(body.model_dump())
+
+@router.get("/materias", name="listarMaterias")
+def listar_Materias():
+    return listar_materias_db()
+
+@router.get("/materias/{id_materia}", name="obtenerMateria")
+def obtener_Materia(id_materia:int = Path(..., ge=1)):
+    return obtener_materia_db(id_materia)
+
+@router.put("/materias/{id_materia}", name="actualizarMateria")
+def actualizar_Materia(id_materia:int, body:CrearMateria):
+    return actualizar_materia_db(id_materia, body.model_dump(exclude_none=True))
+
+@router.delete("/materias/{id_materia}", name="eliminarMateria")
+def eliminar_Materia(id_materia:int):
+    return eliminar_materia_db(id_materia)
+
+
 
 """
 Routes de Toma
@@ -151,6 +177,6 @@ def obtener_disponibilidad(id_asesor: int = Path(..., ge=0)):
 
 # Crear una nueva disponibilidad (el botón de Guardar)
 @router.post("/disponibilidad", name="crearDisponibilidad")
-def crear_nueva_disponibilidad(data: CrearDisponibilidad):
+def crear_nueva_disponibilidad(data:CrearDisponibilidad):
     # Convertimos el modelo de Pydantic a diccionario para el service
     return crearDisponibilidad(data.model_dump())
