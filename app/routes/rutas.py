@@ -5,10 +5,23 @@ from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, 
 from app.service.asesoria_service import actualizarAsesoria, crearAsesoria, eliminarAsesoria
 from app.service.toma_service import crearToma
 from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios
+from app.models.asesor import CrearAsesor, ActualizarAsesor, ListaAsesor, SoloAsesor 
+from app.service.asesor_service import eliminarAsesor, crearAsesor, actualizarAsesor, listarAsesores, buscarAsesorPorMateria, buscarAsesorPorAsesorNombre, buscarAsesorPorAsesorID
 from app.service.encryptar import descifrar
 from app.core.supabase_client import get_db
 from app.models.materia import CrearMateria, RecuperarMateria, CrearImpartir, RecuperarImpartir
-from app.service.materia_service import crear_materia_db, asignar_impartir_db
+from app.service.materia_service import (
+    crear_materia_db,
+    asignar_impartir_db,
+    listar_materias_db,
+    obtener_materia_db,
+    actualizar_materia_db,
+    eliminar_materia_db,
+    listar_impartir_db,
+    obtener_impartir_db,
+    actualizar_impartir_db,
+    eliminar_impartir_db,
+)
 from app.models.asesor import CrearAsesor
 from app.service.asesor_service import crearAsesor
 
@@ -64,6 +77,31 @@ Routes de Asesores
 def crear_Asesor(body:CrearAsesor):
     return crearAsesor(body.model_dump())
 
+@router.get("/asesores/eliminarAsesor/{id_asesor}", name="eliminarAsesor")
+def eliminar_Asesor(id_asesor:int):
+    return eliminarAsesor(id_asesor)
+
+@router.put("/asesores/actualizarAsesor/{id_asesor}", response_model=ActualizarAsesor, name="actualizarAsesor")
+def actualizar_Asesor(id_asesor:int, body:ActualizarAsesor):
+    return actualizarAsesor(id_asesor, body.model_dump(exclude_none=True))
+
+@router.get("/asesores/listarAsesores", response_model=ListaAsesor, name="listarAsesores")
+def listar_Asesores():
+    return listarAsesores()
+
+@router.get("/asesores/buscarAsesorMateria/{materia}", response_model=ListaAsesor, name="buscarAsesorMateria")
+def buscar_Asesor(materia:str):
+    return buscarAsesorPorMateria(materia)
+
+@router.get("/asesores/buscarAsesorUsuario/{usuario}", response_model=ListaAsesor, name="buscarAsesorUsuario")
+def buscar_AsesorUsuario(usuario:str):
+    return buscarAsesorPorAsesorNombre(usuario)
+
+@router.get("/asesores/buscarAsesorID/{id_asesor}", response_model=SoloAsesor, name="buscarAsesorID")
+def buscar_AsesorID(id_asesor:int):
+    return buscarAsesorPorAsesorID(id_asesor)
+
+
 """
 Routes de Toma
 """
@@ -102,10 +140,17 @@ def eliminar_Asesoria(id_asesoria:int):
 def actualizar_Asesoria(id_asesoria:int, body:ActualizarAsesoria):
     return actualizarAsesoria(id_asesoria, body.model_dump(exclude_none=True))
 
-@router.get("/asesoria/mostrarAsesoria", response_model=ListaAsesoria, name="mostrarAsesoria")
-def mostrar_Asesoria():
-    return mostrar_Asesoria()
+@router.delete("/impartir/{id_impartir}", name="eliminarImpartir")
+def eliminar_Impartir(id_impartir:int):
+    return eliminar_impartir_db(id_impartir)
+# ------------ RUTAS DE DISPONIBILIDAD ---------------------------------
+# Obtener la disponibilidad de un asesor
+@router.get("/disponibilidad/{id_asesor}", name="obtenerDisponibilidad")
+def obtener_disponibilidad(id_asesor: int = Path(..., ge=0)):
+    return obtenerDisponibilidadPorAsesor(id_asesor)
 
-@router.get("/asesoria/buscarAsesoria/{id_asesoria}", response_model=SoloAsesoria, name="buscarAsesoria")
-def buscar_Asesoria(id_asesoria:int):
-    return buscar_Asesoria(id_asesoria)
+# Crear una nueva disponibilidad (el botón de Guardar)
+@router.post("/disponibilidad", name="crearDisponibilidad")
+def crear_nueva_disponibilidad(data: CrearDisponibilidad):
+    # Convertimos el modelo de Pydantic a diccionario para el service
+    return crearDisponibilidad(data.model_dump())

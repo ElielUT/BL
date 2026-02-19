@@ -6,7 +6,7 @@ from postgrest import CountMethod
 
 def _table():
     sb = get_supabase()
-    return sb.schema(config.supabase_schema).table("horario")
+    return sb.schema(config.supabase_schema).table(config.supabase_horario)
 
 def crearDisponibilidad(data: dict):
     try:

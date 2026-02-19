@@ -7,7 +7,7 @@ class CrearAsesor(BaseModel):
     categoria:str = Field(max_length=15)
     contacto:str = Field(max_length=30)
 
-class ActualizarUsuario(BaseModel):
+class ActualizarAsesor(BaseModel):
     carrera:str | None = Field(max_length=150)
     disponible:bool | None
     categoria:str | None = Field(max_length=15)

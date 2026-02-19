@@ -120,3 +120,19 @@ def eliminar_impartir_db(id:int):
         tb = traceback.format_exc()
         print(f"DEBUG eliminar_impartir_db: {e}\n{tb}")
         raise HTTPException(status_code=500, detail=f"Error al eliminar impartir: {str(e)}\n{tb}")
+
+def buscarMateriaNombre(nombre:str):
+    try:
+        res = _table_materia().select("*").eq("nombre", nombre).execute()
+        print(res.data)
+        return res.data[0] if res.data else None
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al buscar materia: {e}")
+
+def buscarImpartirPorMateria(id_materia:int):
+    try:
+        res = _table_impartir().select("*").eq("id_materia2", id_materia).execute()
+        print(res.data)
+        return res.data[0] if res.data else None
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al buscar impartir: {e}")

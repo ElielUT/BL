@@ -3,6 +3,7 @@ from fastapi.encoders import jsonable_encoder
 from app.core.supabase_client import get_supabase
 from app.core.config import config
 from app.service.encryptar import cifrar
+from postgrest import CountMethod
 
 def _table():
     sb = get_supabase()
@@ -26,6 +27,9 @@ def crearUsuario(datos:dict):
             cnc = datos["contraseña"]
             cc = cifrar(cnc)
             datos["contraseña"] = cc
+        ext = _table().select(count=CountMethod.exact).eq("correo", str(datos["correo"]))
+        if ext.data:
+            raise HTTPException(status_code=404, detail="Correo ya registrado")
         datos = jsonable_encoder(datos)
         res = _table().insert(datos).execute()
         return res.data[0] if res.data else None
@@ -57,7 +61,9 @@ def eliminarUsuario(id:int):
 
 def buscarUsuarios(nombre:str):
     try:
-        res = _table().select("*").eq("nombre", f"%{nombre}%").execute()
+        print(nombre)
+        res = _table().select("*").eq("nombres", nombre or f"%{nombre}%" or f"%{nombre}" or f"{nombre}%" ).execute()
+        print(res.data)
         return {"items":res.data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al buscar usuarios {e}")
