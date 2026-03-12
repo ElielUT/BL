@@ -50,20 +50,21 @@ Routes de Usuarios
 """
 @router.post("/usuarios/inicio", name= "IniciarSesion")
 def iniciarSesion(body:IniciarUsuario):
-    res = inicio(body.correo)
-    cc = res["contraseña"]
-    cnc = descifrar(cc)
     if(body.correo == "admin" and body.contraseña == "admin"):
         return {"Inicio": 3}
-    if(cnc == body.contraseña):
-        if(res["categoria"] == "asesor"):
-            return {"Inicio": 1}
-        elif(res["categoria"] == "alumno"):
-            return {"Inicio": 2}
-        elif(res["categoria"] == "admin"):
-            return {"Inicio": 3}
     else:
-        return {"Inicio": False}
+        res = inicio(body.correo)
+        cc = res["contraseña"]
+        cnc = descifrar(cc)
+        if(cnc == body.contraseña):
+            if(res["categoria"] == "asesor"):
+                return {"Inicio": 1}
+            elif(res["categoria"] == "alumno"):
+                return {"Inicio": 2}
+            elif(res["categoria"] == "admin"):
+                return {"Inicio": 3}
+        else:
+            return {"Inicio": False}
     
 @router.post("/usuarios/crearUsuario", response_model=CrearUsuario,name="crearUsuario")
 def crear_Usuario(body:CrearUsuario):
