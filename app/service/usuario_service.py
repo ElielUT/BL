@@ -64,7 +64,7 @@ def buscarUsuarios(nombre:str):
         print(nombre)
         res = _table().select("*").eq("nombres", nombre or f"%{nombre}%" or f"%{nombre}" or f"{nombre}%" ).execute()
         print(res.data)
-        return {"items":res.data}
+        return {"item":res.data[0] if res.data else None}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al buscar usuarios {e}")
 
@@ -78,6 +78,6 @@ def listarUsuarios():
 def buscarUsuarioID(id:int):
     try:
         res = _table().select("*").eq("id_usuario", int(id)).execute()
-        return {"items":res.data[0] if res.data else None}
+        return {"item":res.data[0] if res.data else None}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al buscar usuario {e}")

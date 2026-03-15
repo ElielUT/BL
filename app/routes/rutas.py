@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Path, Query
 from app.models.asesoria import ActualizarAsesoria, CrearAsesoria, ListaAsesoria, SoloAsesoria
 from app.models.toma import CrearToma, ListaToma
-from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, ListaUsuario
+from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, ListaUsuario, SoloUsuario
 from app.service.disponibilidad_service import obtenerDisponibilidadPorAsesor, crearDisponibilidad
 from app.models.disponibilidad import CrearDisponibilidad
 from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios, buscarUsuarioID
@@ -86,7 +86,7 @@ def mostrar_Usuarios():
 def buscar_Usuarios(nombre:str):
     return buscarUsuarios(nombre)
 
-@router.get("/usuarios/buscarUsuarioID/{id_usuario}", response_model=ListaUsuario, name="buscarUsuarioID")
+@router.get("/usuarios/buscarUsuarioID/{id_usuario}", response_model=SoloUsuario, name="buscarUsuarioID")
 def buscar_UsuarioID(id_usuario:int):
     return buscarUsuarioID(id_usuario)
 
