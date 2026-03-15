@@ -27,7 +27,7 @@ def crearUsuario(datos:dict):
             cnc = datos["contraseña"]
             cc = cifrar(cnc)
             datos["contraseña"] = cc
-        ext = _table().select(count=CountMethod.exact).eq("correo", str(datos["correo"]))
+        ext = _table().select(count=CountMethod.exact).eq("correo", str(datos["correo"])).execute()
         if ext.data:
             raise HTTPException(status_code=404, detail="Correo ya registrado")
         datos = jsonable_encoder(datos)

@@ -82,7 +82,7 @@ def actualizar_Usuario(id_usuario:int, body:ActualizarUsuario):
 def mostrar_Usuarios():
     return listarUsuarios()
 
-@router.get("/usuarios/buscarUsuarios/{nombre}", response_model=ListaUsuario, name="buscarUsuarios")
+@router.get("/usuarios/buscarUsuarios/{nombre}", response_model=SoloUsuario, name="buscarUsuarios")
 def buscar_Usuarios(nombre:str):
     return buscarUsuarios(nombre)
 
