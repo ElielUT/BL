@@ -59,11 +59,9 @@ def eliminarUsuario(id:int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al eliminar el usuario {e}")
 
-def buscarUsuarios(nombre:str):
+def buscarUsuarios(correo:str):
     try:
-        print(nombre)
-        res = _table().select("*").eq("nombres", nombre or f"%{nombre}%" or f"%{nombre}" or f"{nombre}%" ).execute()
-        print(res.data)
+        res = _table().select("*").eq("correo", correo).execute()
         return {"item":res.data[0] if res.data else None}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al buscar usuarios {e}")
