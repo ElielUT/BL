@@ -6,7 +6,7 @@ from app.service.disponibilidad_service import obtenerDisponibilidadPorAsesor, c
 from app.models.disponibilidad import CrearDisponibilidad
 from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios, buscarUsuarioID
 from app.models.asesor import CrearAsesor, ActualizarAsesor, ListaAsesor, SoloAsesor 
-from app.service.asesor_service import eliminarAsesor, crearAsesor, actualizarAsesor, listarAsesores, buscarAsesorPorMateria, buscarAsesorPorAsesorNombre, buscarAsesorPorAsesorID
+from app.service.asesor_service import eliminarAsesor, crearAsesor, actualizarAsesor, listarAsesores, buscarAsesorPorMateria, buscarAsesorPorAsesorNombre, buscarAsesorPorAsesorID, eliminarAsesorForaneo
 from app.service.encryptar import descifrar
 from app.models.disponibilidad import CrearDisponibilidad
 from app.service.disponibilidad_service import obtenerDisponibilidadPorAsesor, crearDisponibilidad
@@ -30,6 +30,7 @@ from app.service.alumno_service import (
     crearAlumno, 
     actualizarAlumno, 
     eliminarAlumno, 
+    eliminarAlumnoForaneo,
     listarAlumnos, 
     buscarAlumnoPorID
 )
@@ -120,6 +121,13 @@ def buscar_AsesorUsuario(usuario:str):
 @router.get("/asesores/buscarAsesorID/{id_asesor}", response_model=SoloAsesor, name="buscarAsesorID")
 def buscar_AsesorID(id_asesor:int):
     return buscarAsesorPorAsesorID(id_asesor)
+
+@router.delete("/asesores/eliminarAsesorForaneo/{id_asesor}")
+async def borrar_asesor(id_asesor: int):
+    res = eliminarAsesorForaneo(id_asesor)
+    if not res or not res.get("items"):
+        raise HTTPException(status_code=404, detail="No se pudo eliminar el asesor o no existe")
+    return {"message": "Asesor eliminado exitosamente", "id": id_asesor}
 
 """
 Routes de Materias
@@ -230,6 +238,13 @@ async def actualizar_datos_alumno(id_alumno: int, datos: ActualizarAlumno):
 @router.delete("/alumnos/{id_alumno}")
 async def borrar_alumno(id_alumno: int):
     res = eliminarAlumno(id_alumno)
+    if not res or not res.get("items"):
+        raise HTTPException(status_code=404, detail="No se pudo eliminar el alumno o no existe")
+    return {"message": "Alumno eliminado exitosamente", "id": id_alumno}
+
+@router.delete("/alumnos/eliminarAlumnoForaneo/{id_alumno}")
+async def borrar_alumno(id_alumno: int):
+    res = eliminarAlumnoForaneo(id_alumno)
     if not res or not res.get("items"):
         raise HTTPException(status_code=404, detail="No se pudo eliminar el alumno o no existe")
     return {"message": "Alumno eliminado exitosamente", "id": id_alumno}

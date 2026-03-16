@@ -52,6 +52,15 @@ def eliminarAlumno(id: int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al eliminar el Alumno: {e}")
 
+def eliminarAlumnoForaneo(id:int):
+    try:
+        if not id:
+            raise HTTPException(status_code=404, detail="Datos incompletos")
+        res = _table().delete().eq("id_usuario1", int(id)).execute()
+        return {"items":res.data[0] if res.data else None}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al eliminar el Alumno {e}")
+
 def listarAlumnos():
     try:
         res = _table().select("*").execute()

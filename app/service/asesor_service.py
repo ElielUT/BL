@@ -42,6 +42,15 @@ def eliminarAsesor(id:int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al eliminar el Asesor {e}")
 
+def eliminarAsesorForaneo(id:int):
+    try:
+        if not id:
+            raise HTTPException(status_code=404, detail="Datos incompletos")
+        res = _table().delete().eq("id_usuario2", int(id)).execute()
+        return {"items":res.data[0] if res.data else None}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al eliminar el Asesor {e}")
+
 def listarAsesores():
     try:
         res = _table().select("*").execute()
