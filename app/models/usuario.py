@@ -42,3 +42,4 @@ class CantidadUsuarios(BaseModel):
     Total:int
     Asesorados:int
     Asesores:int
+    Administradores:int

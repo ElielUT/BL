@@ -85,6 +85,7 @@ def cantidadUsuarios():
         total = _table().select("*", count=CountMethod.exact).execute()
         asesorados = _table().select("*", count=CountMethod.exact).eq("categoria", "asesorado").execute()
         asesores = _table().select("*", count=CountMethod.exact).eq("categoria", "asesor").execute()
-        return {"Total":total.count, "Asesorados":asesorados.count, "Asesores":asesores.count}
+        administradores = _table().select("*", count=CountMethod.exact).eq("categoria", "admin").execute()
+        return {"Total":total.count, "Asesorados":asesorados.count, "Asesores":asesores.count, "Administradores":administradores.count}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al contar usuarios {e}")
