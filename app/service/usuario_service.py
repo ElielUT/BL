@@ -79,3 +79,12 @@ def buscarUsuarioID(id:int):
         return {"item":res.data[0] if res.data else None}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al buscar usuario {e}")
+
+def cantidadUsuarios():
+    try:
+        total = _table().select("*", count=CountMethod.exact).execute()
+        asesorados = _table().select("*", count=CountMethod.exact).eq("categoria", "asesorado").execute()
+        asesores = _table().select("*", count=CountMethod.exact).eq("categoria", "asesor").execute()
+        return {"Total":total.count, "Asesorados":asesorados.count, "Asesores":asesores.count}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al contar usuarios {e}")
