@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Path, Query
 from app.models.asesoria import ActualizarAsesoria, CrearAsesoria, ListaAsesoria, SoloAsesoria
-from app.models.toma import CrearToma, ListaToma
+from app.models.toma import CrearToma, ListaToma, EstadisticasToma
 from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, ListaUsuario, SoloUsuario, CantidadUsuarios
 from app.service.disponibilidad_service import obtenerDisponibilidadPorAsesor, crearDisponibilidad
 from app.models.disponibilidad import CrearDisponibilidad
@@ -36,7 +36,7 @@ from app.service.alumno_service import (
 )
 
 # Importaciones para las rutas de Toma y Asesoría
-from app.service.toma_service import crearToma
+from app.service.toma_service import crearToma, estadisticas_asesorias
 from app.service.asesoria_service import crearAsesoria, eliminarAsesoria, actualizarAsesoria
 
 
@@ -164,6 +164,10 @@ Routes de Toma
 @router.get("/toma/crearToma/", response_model= CrearToma ,name="crearToma")
 def crear_Toma(body:CrearToma):
     return crearToma(body.model_dump())
+
+@router.get("/toma/estadisticas", response_model=EstadisticasToma, name="estadisticasToma")
+def obtener_estadisticas_toma():
+    return estadisticas_asesorias()
 
 @router.get("/toma/mostrarToma/", response_model= ListaToma,name="mostrarToma")
 def mostrar_Toma():

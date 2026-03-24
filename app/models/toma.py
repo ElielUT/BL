@@ -24,3 +24,9 @@ class ListaToma(BaseModel):
 
 class SoloToma(BaseModel):
     item:RecuperarToma
+
+class EstadisticasToma(BaseModel):
+    totales: int
+    pendientes: int
+    aceptadas: int
+    completadas: int
