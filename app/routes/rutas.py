@@ -36,7 +36,7 @@ from app.service.alumno_service import (
 )
 
 # Importaciones para las rutas de Toma y Asesoría
-from app.service.toma_service import crearToma, estadisticas_asesorias
+from app.service.toma_service import crearToma, estadisticas_asesorias, mostrar_Toma, buscar_TomaAsesor, buscar_TomaAlumno, buscar_TomaAsesoria
 from app.service.asesoria_service import crearAsesoria, eliminarAsesoria, actualizarAsesoria
 
 
@@ -170,19 +170,19 @@ def obtener_estadisticas_toma():
     return estadisticas_asesorias()
 
 @router.get("/toma/mostrarToma/", response_model= ListaToma,name="mostrarToma")
-def mostrar_Toma():
+def endpoint_mostrar_Toma():
     return mostrar_Toma()
 
 @router.get("/toma/buscarTomaAsesor/{id_asesor}", response_model=ListaToma, name="buscarTomaAsesor")
-def buscar_TomaAsesor(id_asesor:int):
+def endpoint_buscar_TomaAsesor(id_asesor:int):
     return buscar_TomaAsesor(id_asesor)
 
 @router.get("/toma/buscarTomaAlumno/{id_alumno}", response_model=ListaToma, name="buscarTomaAlumno")
-def buscar_TomaAlumno(id_alumno:int):
+def endpoint_buscar_TomaAlumno(id_alumno:int):
     return buscar_TomaAlumno(id_alumno)
 
 @router.get("/toma/buscarTomaAsesoria/{id_asesoria}", response_model=ListaToma, name="buscarTomaAsesoria")
-def buscar_TomaAsesoria(id_asesoria:int):
+def endpoint_buscar_TomaAsesoria(id_asesoria:int):
     return buscar_TomaAsesoria(id_asesoria)
 
 """

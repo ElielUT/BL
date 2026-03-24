@@ -48,4 +48,31 @@ def estadisticas_asesorias():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al obtener estadísticas de tomas/asesorías: {e}")
-    
+
+def mostrar_Toma():
+    try:
+        res = _table().select("*, asesoria(*, materia(*)), asesor(*, usuario(*)), alumno(*, usuario(*))").execute()
+        return {"items": res.data if res.data else []}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al obtener tomas: {e}")
+
+def buscar_TomaAsesor(id_asesor:int):
+    try:
+        res = _table().select("*, asesoria(*, materia(*)), asesor(*, usuario(*)), alumno(*, usuario(*))").eq("id_asesor3", id_asesor).execute()
+        return {"items": res.data if res.data else []}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al obtener tomas del asesor: {e}")
+
+def buscar_TomaAlumno(id_alumno:int):
+    try:
+        res = _table().select("*, asesoria(*, materia(*)), asesor(*, usuario(*)), alumno(*, usuario(*))").eq("id_alumno2", id_alumno).execute()
+        return {"items": res.data if res.data else []}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al obtener tomas del alumno: {e}")
+
+def buscar_TomaAsesoria(id_asesoria:int):
+    try:
+        res = _table().select("*, asesoria(*, materia(*)), asesor(*, usuario(*)), alumno(*, usuario(*))").eq("id_asesoria2", id_asesoria).execute()
+        return {"items": res.data if res.data else []}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al obtener la toma de la asesoria: {e}")
