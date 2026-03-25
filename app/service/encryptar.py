@@ -12,6 +12,6 @@ def cifrar(contraseña):
 def descifrar(contraseñaEncr):
     try:
         contraseña_desencryptada = cipher_suite.decrypt(contraseñaEncr.encode())
-        return contraseña_desencryptada
+        return contraseña_desencryptada.decode()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al descifrar {e}")

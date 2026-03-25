@@ -27,7 +27,7 @@ def crearUsuario(datos:dict):
             cnc = datos["contraseña"]
             cc = cifrar(cnc)
             datos["contraseña"] = cc
-        ext = _table().select(count=CountMethod.exact).eq("correo", str(datos["correo"]))
+        ext = _table().select(count=CountMethod.exact).eq("correo", str(datos["correo"])).execute()
         if ext.data:
             raise HTTPException(status_code=404, detail="Correo ya registrado")
         datos = jsonable_encoder(datos)
@@ -59,12 +59,10 @@ def eliminarUsuario(id:int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al eliminar el usuario {e}")
 
-def buscarUsuarios(nombre:str):
+def buscarUsuarios(correo:str):
     try:
-        print(nombre)
-        res = _table().select("*").eq("nombres", nombre or f"%{nombre}%" or f"%{nombre}" or f"{nombre}%" ).execute()
-        print(res.data)
-        return {"items":res.data}
+        res = _table().select("*").eq("correo", correo).execute()
+        return {"item":res.data[0] if res.data else None}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al buscar usuarios {e}")
 
@@ -78,6 +76,16 @@ def listarUsuarios():
 def buscarUsuarioID(id:int):
     try:
         res = _table().select("*").eq("id_usuario", int(id)).execute()
-        return {"items":res.data[0] if res.data else None}
+        return {"item":res.data[0] if res.data else None}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al buscar usuario {e}")
+
+def cantidadUsuarios():
+    try:
+        total = _table().select("*", count=CountMethod.exact).execute()
+        asesorados = _table().select("*", count=CountMethod.exact).eq("categoria", "asesorado").execute()
+        asesores = _table().select("*", count=CountMethod.exact).eq("categoria", "asesor").execute()
+        administradores = _table().select("*", count=CountMethod.exact).eq("categoria", "admin").execute()
+        return {"Total":total.count, "Asesorados":asesorados.count, "Asesores":asesores.count, "Administradores":administradores.count}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al contar usuarios {e}")

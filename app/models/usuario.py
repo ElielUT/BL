@@ -37,3 +37,9 @@ class ListaUsuario(BaseModel):
 
 class SoloUsuario(BaseModel):
     item:RecuperarUsuarios
+
+class CantidadUsuarios(BaseModel):
+    Total:int
+    Asesorados:int
+    Asesores:int
+    Administradores:int
