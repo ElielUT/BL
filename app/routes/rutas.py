@@ -44,7 +44,7 @@ router = APIRouter()
 
 @router.get("/")
 def bienvenida():
-    return "Bienvenido a la API de LobiFind"
+    return {"Bienvenida": "Bienvenido a la API de LobiFind"}
 
 """
 Routes de Usuarios
@@ -60,14 +60,14 @@ def iniciarSesion(body:IniciarUsuario):
         if(cnc == body.contraseña):
             if(res["categoria"] == "asesor"):
                 return {"Inicio": 1}
-            elif(res["categoria"] == "alumno"):
+            elif(res["categoria"] == "asesorado"):
                 return {"Inicio": 2}
             elif(res["categoria"] == "admin"):
                 return {"Inicio": 3}
         else:
             return {"Inicio": False}
     
-@router.post("/usuarios/crearUsuario", response_model=CrearUsuario,name="crearUsuario")
+@router.post("/usuarios/crearUsuario", name="crearUsuario")
 def crear_Usuario(body:CrearUsuario):
     return crearUsuario(body.model_dump())
 
