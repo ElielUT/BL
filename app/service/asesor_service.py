@@ -53,8 +53,11 @@ def eliminarAsesorForaneo(id:int):
 
 def listarAsesores():
     try:
-        res = _table().select("*").execute()
-        return {"items":res.data if res.data else None}
+        sb = get_supabase()
+        res = sb.schema(config.supabase_schema).table(config.supabase_asesor)\
+            .select("*, usuario(*)") \
+            .execute()
+        return {"items": res.data if res.data else None}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al listar los Asesores {e}")
 
@@ -68,8 +71,15 @@ def buscarAsesorPorMateria(materia:str):
         resImp = buscarImpartirPorMateria(resMat["id_materia"])
         if not resImp:
             raise HTTPException(status_code=404, detail="Impartir no encontrado")
-        res = _table().select("*").eq("id_asesor", resImp["id_asesor2"]).execute()
-        return {"items":res.data if res.data else None}
+        
+        # Hacer join con la tabla usuario para obtener nombres y apellidos
+        sb = get_supabase()
+        res = sb.schema(config.supabase_schema).table(config.supabase_asesor)\
+            .select("*, usuario(*)") \
+            .eq("id_asesor", resImp["id_asesor2"])\
+            .execute()
+        
+        return {"items": res.data if res.data else None}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al buscar el Asesor {e}")
 
@@ -89,7 +99,11 @@ def buscarAsesorPorAsesorID(id:int):
     try:
         if not id:
             raise HTTPException(status_code=404, detail="Datos incompletos")
-        res = _table().select("*").eq("id_asesor", int(id)).execute()
-        return {"items":res.data if res.data else None}
+        sb = get_supabase()
+        res = sb.schema(config.supabase_schema).table(config.supabase_asesor)\
+            .select("*, usuario(*)") \
+            .eq("id_asesor", int(id))\
+            .execute()
+        return {"items": res.data[0] if res.data else None}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al buscar el Asesor {e}")
