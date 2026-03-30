@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 
 class CrearAsesor(BaseModel):
     id_usuario2:int = Field(ge=0)
@@ -20,9 +21,13 @@ class RecuperarAsesor(BaseModel):
     disponible:bool
     categoria:str
     contacto:str
+    # Campos adicionales del usuario (opcionales)
+    nombres: Optional[str] = None
+    apellidos: Optional[str] = None
+    correo_usuario: Optional[str] = None
 
 class ListaAsesor(BaseModel):
-    items:list[RecuperarAsesor]
+    items: list[RecuperarAsesor]
 
 class SoloAsesor(BaseModel):
-    item:RecuperarAsesor
+    item: RecuperarAsesor

@@ -65,23 +65,75 @@ def buscarAsesorPorMateria(materia:str):
     try:
         if not materia:
             raise HTTPException(status_code=404, detail="Datos incompletos")
-        resMat = buscarMateriaNombre(materia)
-        if not resMat:
-            raise HTTPException(status_code=404, detail="Materia no encontrada")
-        resImp = buscarImpartirPorMateria(resMat["id_materia"])
-        if not resImp:
-            raise HTTPException(status_code=404, detail="Impartir no encontrado")
         
-        # Hacer join con la tabla usuario para obtener nombres y apellidos
         sb = get_supabase()
-        res = sb.schema(config.supabase_schema).table(config.supabase_asesor)\
-            .select("*, usuario(*)") \
-            .eq("id_asesor", resImp["id_asesor2"])\
+        
+        # Paso 1: Buscar la materia por nombre
+        resMat = sb.schema(config.supabase_schema).table(config.supabase_materia)\
+            .select("*") \
+            .eq("nombre", materia)\
             .execute()
         
-        return {"items": res.data if res.data else None}
+        print(f"Paso 1 - Materia encontrada: {resMat.data}")
+        
+        if not resMat.data:
+            return {"items": []}
+        
+        id_materia = resMat.data[0]["id_materia"]
+        
+        # Paso 2: Buscar en imparte los asesores de esa materia
+        resImp = sb.schema(config.supabase_schema).table(config.supabase_imparte)\
+            .select("id_asesor2") \
+            .eq("id_materia2", id_materia)\
+            .execute()
+        
+        print(f"Paso 2 - Imparte encontrado: {resImp.data}")
+        
+        if not resImp.data:
+            return {"items": []}
+        
+        # Paso 3: Obtener los IDs de los asesores
+        ids_asesores = [item["id_asesor2"] for item in resImp.data]
+        print(f"Paso 3 - IDs de asesores: {ids_asesores}")
+        
+        # Paso 4: Buscar cada asesor y su usuario
+        asesores_con_usuario = []
+        for id_asesor in ids_asesores:
+            # Buscar asesor
+            resAsesor = sb.schema(config.supabase_schema).table(config.supabase_asesor)\
+                .select("*") \
+                .eq("id_asesor", id_asesor)\
+                .execute()
+            
+            print(f"Paso 4a - Asesor encontrado: {resAsesor.data}")
+            
+            if resAsesor.data:
+                asesor = resAsesor.data[0]
+                
+                print(f"Buscando usuario con id_usuario: {asesor['id_usuario2']}")
+                
+                # Buscar usuario asociado
+                resUsuario = sb.schema(config.supabase_schema).table(config.supabase_usuario)\
+                    .select("nombres, apellidos, correo") \
+                    .eq("id_usuario", asesor["id_usuario2"])\
+                    .execute()
+                
+                print(f"Paso 4b - Usuario encontrado: {resUsuario.data}")
+                
+                if resUsuario.data:
+                    usuario = resUsuario.data[0]
+                    asesor["nombres"] = usuario["nombres"]
+                    asesor["apellidos"] = usuario["apellidos"]
+                    asesor["correo_usuario"] = usuario["correo"]
+                
+                asesores_con_usuario.append(asesor)
+        
+        print(f"Resultado final: {asesores_con_usuario}")
+        return {"items": asesores_con_usuario}
+        
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error al buscar el Asesor {e}")
+        print(f"Error detallado: {e}")
+        raise HTTPException(status_code=500, detail=f"Error al buscar el Asesor: {str(e)}")
 
 def buscarAsesorPorAsesorNombre(usuario:str):
     try:
