@@ -59,9 +59,11 @@ def iniciarSesion(body:IniciarUsuario):
         cnc = descifrar(cc)
         if(cnc == body.contraseña):
             if(res["categoria"] == "asesor"):
-                return {"Inicio": 1}
+                return {"Inicio": 1,
+                        "id": res["id_usuario"]}
             elif(res["categoria"] == "asesorado"):
-                return {"Inicio": 2}
+                return {"Inicio": 2,
+                        "id": res["id_usuario"]}
             elif(res["categoria"] == "admin"):
                 return {"Inicio": 3}
         else:
