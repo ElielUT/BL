@@ -6,7 +6,7 @@ from app.service.disponibilidad_service import obtenerDisponibilidadPorAsesor, c
 from app.models.disponibilidad import CrearDisponibilidad
 from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios, buscarUsuarioID, cantidadUsuarios
 from app.models.asesor import CrearAsesor, ActualizarAsesor, ListaAsesor, SoloAsesor 
-from app.service.asesor_service import eliminarAsesor, crearAsesor, actualizarAsesor, listarAsesores, buscarAsesorPorMateria, buscarAsesorPorAsesorNombre, buscarAsesorPorAsesorID, eliminarAsesorForaneo
+from app.service.asesor_service import eliminarAsesor, crearAsesor, actualizarAsesor, listarAsesores, buscarAsesorPorMateria, buscarAsesorPorAsesorNombre, buscarAsesorPorAsesorID, eliminarAsesorForaneo, actualizarAsesorForaneo
 from app.service.encryptar import descifrar
 from app.models.disponibilidad import CrearDisponibilidad
 from app.service.disponibilidad_service import obtenerDisponibilidadPorAsesor, crearDisponibilidad
@@ -31,6 +31,7 @@ from app.service.alumno_service import (
     actualizarAlumno, 
     eliminarAlumno, 
     eliminarAlumnoForaneo,
+    actualizarAlumnoForaneo,
     listarAlumnos, 
     buscarAlumnoPorID
 )
@@ -134,6 +135,13 @@ async def borrar_asesor(id_asesor: int):
     if not res or not res.get("items"):
         raise HTTPException(status_code=404, detail="No se pudo eliminar el asesor o no existe")
     return {"message": "Asesor eliminado exitosamente", "id": id_asesor}
+
+@router.put("/asesores/actualizarAsesorForaneo/{id_usuario}")
+async def actualizar_asesor_foraneo(id_usuario: int, datos: dict):
+    res = actualizarAsesorForaneo(id_usuario, datos.get("carrera"))
+    if not res or not res.get("items"):
+        raise HTTPException(status_code=404, detail="No se pudo actualizar el asesor o no existe")
+    return {"message": "Asesor actualizado exitosamente", "id": id_usuario}
 
 """
 Routes de Materias
@@ -258,4 +266,11 @@ async def borrar_alumno(id_alumno: int):
     if not res or not res.get("items"):
         raise HTTPException(status_code=404, detail="No se pudo eliminar el alumno o no existe")
     return {"message": "Alumno eliminado exitosamente", "id": id_alumno}
+
+@router.put("/alumnos/actualizarAlumnoForaneo/{id_usuario}")
+async def actualizar_alumno_foraneo(id_usuario: int, datos: dict):
+    res = actualizarAlumnoForaneo(id_usuario, datos.get("carrera"))
+    if not res or not res.get("items"):
+        raise HTTPException(status_code=404, detail="No se pudo actualizar el alumno o no existe")
+    return {"message": "Alumno actualizado exitosamente", "id": id_usuario}
 #------------------------------------------------------------------------

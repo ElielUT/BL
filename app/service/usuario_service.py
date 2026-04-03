@@ -9,6 +9,14 @@ def _table():
     sb = get_supabase()
     return sb.schema(config.supabase_schema).table(config.supabase_usuario)
 
+def _table2():
+    sb = get_supabase()
+    return sb.schema(config.supabase_schema).table(config.supabase_asesor)
+
+def _table3():
+    sb = get_supabase()
+    return sb.schema(config.supabase_schema).table(config.supabase_alumno)
+
 def inicio(correo:str):
     try:
         res = _table().select("id_usuario, correo, contraseña, categoria").eq("correo", str(correo)).execute()
@@ -141,7 +149,22 @@ def listarUsuarios():
 def buscarUsuarioID(id:int):
     try:
         res = _table().select("*").eq("id_usuario", int(id)).execute()
-        return {"item":res.data[0] if res.data else None}
+        if not res.data:
+            return {"item": None, "carrera": None}
+            
+        usuario = res.data[0]
+        carrera_data = None
+        
+        if usuario.get("categoria") == "asesor":
+            res2 = _table2().select("carrera").eq("id_usuario2", int(id)).execute()
+            if res2.data:
+                carrera_data = res2.data[0]
+        elif usuario.get("categoria") == "asesorado":
+            res2 = _table3().select("carrera").eq("id_usuario1", int(id)).execute()
+            if res2.data:
+                carrera_data = res2.data[0]
+                
+        return {"item": usuario, "carrera": carrera_data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al buscar usuario {e}")
 

@@ -37,6 +37,7 @@ class ListaUsuario(BaseModel):
 
 class SoloUsuario(BaseModel):
     item:RecuperarUsuarios
+    carrera: dict | None = None
 
 class CantidadUsuarios(BaseModel):
     Total:int
