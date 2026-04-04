@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 
 class Config(BaseSettings):
-    allowed:list[str] = Field(..., alias="ALLOWED.ORIGINS")
+    allowed:list[str] = Field(..., alias="ALLOWED_ORIGINS")
     supabase_url:str = Field(..., alias="SUPABASE_URL")
     supabase_key:str = Field(default="public", alias="SUPABASE_KEY")
     supabase_schema:str = Field(..., alias="SUPABASE_SCHEMA")
