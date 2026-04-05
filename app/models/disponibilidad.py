@@ -10,16 +10,7 @@ class CrearDisponibilidad(BaseModel):
     dia: date
     hora_in: time
     hora_fin: time
-
-    # --- Validaciones de tiempo ---
-
-    @field_validator('hora_in', 'hora_fin')
-    @classmethod
-    def validar_30_minutos(cls, v: time):
-        if v.minute not in [0, 30]:
-            raise ValueError('Debe ser bloque de 30 min (:00 o :30)')
-        return v
-
+    
     @field_validator('hora_fin')
     @classmethod
     def validar_orden(cls, v: time, info):
