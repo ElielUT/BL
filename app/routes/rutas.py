@@ -23,6 +23,7 @@ from app.service.materia_service import (
     obtener_impartir_db,
     actualizar_impartir_db,
     eliminar_impartir_db,
+    desvincular_asignacion_db
 )
 from fastapi import APIRouter, HTTPException
 from app.models.alumnos import CrearAlumno, ActualizarAlumno, RecuperarAlumno, ListaAlumnos, SoloAlumno
@@ -228,6 +229,14 @@ def actualizar_Asesoria(id_asesoria:int, body:ActualizarAsesoria):
 @router.delete("/impartir/{id_impartir}", name="eliminarImpartir")
 def eliminar_Impartir(id_impartir:int):
     return eliminar_impartir_db(id_impartir)
+
+@router.delete("/impartir/asignacion/{id_materia}/{id_asesor}", name="desvincularAsesorMateria")
+def desvincular_Asesor_Materia(id_materia:int, id_asesor:int):
+    return desvincular_asignacion_db(id_materia, id_asesor)
+
+@router.post("/impartir", response_model=CrearImpartir, name="crearImpartir")
+def crear_Impartir(body:CrearImpartir):
+    return asignar_impartir_db(body.model_dump())
 # ------------ RUTAS DE DISPONIBILIDAD ---------------------------------
 # Obtener la disponibilidad de un asesor
 @router.get("/disponibilidad/{id_asesor}", name="obtenerDisponibilidad")

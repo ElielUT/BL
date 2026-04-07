@@ -28,6 +28,8 @@ def crear_materia_db(datos: dict):
         datos = jsonable_encoder(datos)
         res = _table_materia().insert(datos).execute()
         return res.data[0] if res.data else None
+    except HTTPException as he:
+        raise he
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al crear materia: {e}")
 
@@ -46,6 +48,8 @@ def asignar_impartir_db(datos: dict):
         datos = jsonable_encoder(datos)
         res = _table_impartir().insert(datos).execute()
         return res.data[0] if res.data else None
+    except HTTPException as he:
+        raise he
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al asignar materia: {e}")
 
@@ -70,6 +74,8 @@ def actualizar_materia_db(id:int, datos:dict):
         datos = jsonable_encoder(datos)
         res = _table_materia().update(datos).eq("id_materia", int(id)).execute()
         return {"items": res.data[0] if res.data else None}
+    except HTTPException as he:
+        raise he
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al actualizar materia: {e}")
 
@@ -79,6 +85,8 @@ def eliminar_materia_db(id:int):
             raise HTTPException(status_code=404, detail="ID faltante")
         res = _table_materia().delete().eq("id_materia", int(id)).execute()
         return {"items": res.data[0] if res.data else None}
+    except HTTPException as he:
+        raise he
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al eliminar materia: {e}")
 
@@ -93,6 +101,8 @@ def obtener_impartir_db(id:int):
     try:
         res = _table_impartir().select("*").eq("id_impartir", int(id)).execute()
         return {"items": res.data[0] if res.data else None}
+    except HTTPException as he:
+        raise he
     except Exception as e:
         import traceback
         tb = traceback.format_exc()
@@ -106,6 +116,8 @@ def actualizar_impartir_db(id:int, datos:dict):
         datos = jsonable_encoder(datos)
         res = _table_impartir().update(datos).eq("id_impartir", int(id)).execute()
         return {"items": res.data[0] if res.data else None}
+    except HTTPException as he:
+        raise he
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al actualizar impartir: {e}")
 
@@ -115,11 +127,27 @@ def eliminar_impartir_db(id:int):
             raise HTTPException(status_code=404, detail="ID faltante")
         res = _table_impartir().delete().eq("id_impartir", int(id)).execute()
         return {"items": res.data[0] if res.data else None}
+    except HTTPException as he:
+        raise he
     except Exception as e:
         import traceback
         tb = traceback.format_exc()
         print(f"DEBUG eliminar_impartir_db: {e}\n{tb}")
         raise HTTPException(status_code=500, detail=f"Error al eliminar impartir: {str(e)}\n{tb}")
+
+def desvincular_asignacion_db(id_materia: int, id_asesor: int):
+    try:
+        res = _table_impartir().delete().eq("id_materia2", int(id_materia)).eq("id_asesor2", int(id_asesor)).execute()
+        if not res.data:
+            raise HTTPException(status_code=404, detail="Asignación no encontrada")
+        return {"items": res.data[0]}
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        import traceback
+        tb = traceback.format_exc()
+        print(f"DEBUG desvincular_asignacion_db: {e}\n{tb}")
+        raise HTTPException(status_code=500, detail=f"Error al desvincular materia y asesor: {str(e)}\n{tb}")
 
 def buscarMateriaNombre(nombre:str):
     try:
