@@ -25,6 +25,7 @@ class RecuperarAsesor(BaseModel):
     nombres: Optional[str] = None
     apellidos: Optional[str] = None
     correo_usuario: Optional[str] = None
+    usuario: Optional[dict] = None
 
 class ListaAsesor(BaseModel):
     items: list[RecuperarAsesor]
