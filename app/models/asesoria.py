@@ -1,13 +1,14 @@
 from pydantic import BaseModel, Field
 
 class CrearAsesoria(BaseModel):
-    id_asesor3 : int = Field(ge=0)
     id_materia1 : str = Field(max_length=150)
     tema : str = Field(max_length=300)
+    modalidad : str = Field(default='virtual', max_length=20)
 
 class ActualizarAsesoria(BaseModel):
     id_materia1 : str | None = Field(max_length=150)
     tema : str | None = Field(max_length=300)
+    modalidad : str | None = Field(max_length=20)
 
 class RecuperarAsesoria(BaseModel):
     id_asesoria : int

@@ -39,7 +39,9 @@ from app.service.alumno_service import (
 # Importaciones para las rutas de Toma y Asesoría
 from app.service.toma_service import crearToma, estadisticas_asesorias, mostrar_Toma, buscar_TomaAsesor, buscar_TomaAlumno, buscar_TomaAsesoria
 from app.service.asesoria_service import crearAsesoria, eliminarAsesoria, actualizarAsesoria
-
+from app.service.detalles_service import obtener_detalles_asesoria, guardar_meet_link
+from app.service.meet_service import crear_meet_link
+from app.models.toma import ActualizarMeetLink
 
 router = APIRouter()
 
@@ -186,7 +188,7 @@ def eliminar_Materia(id_materia:int):
 """
 Routes de Toma
 """
-@router.get("/toma/crearToma/", response_model= CrearToma ,name="crearToma")
+@router.post("/toma/crearToma/", name="crearToma")
 def crear_Toma(body:CrearToma):
     return crearToma(body.model_dump())
 
@@ -210,10 +212,19 @@ def endpoint_buscar_TomaAlumno(id_alumno:int):
 def endpoint_buscar_TomaAsesoria(id_asesoria:int):
     return buscar_TomaAsesoria(id_asesoria)
 
+@router.get("/toma/detalles/{id_asesoria}", name="detallesAsesoria")
+def endpoint_detalles_asesoria(id_asesoria: int):
+    return obtener_detalles_asesoria(id_asesoria)
+
+@router.post("/toma/generarMeet/{id_asesor3}/{id_asesoria1}/{id_alumno1}", name="generarMeetLink")
+def endpoint_generar_meet(id_asesor3: int, id_asesoria1: int, id_alumno1: int):
+    meet_link = crear_meet_link()
+    return guardar_meet_link(id_asesor3, id_asesoria1, id_alumno1, meet_link)
+
 """
 Routes de Asesoria
 """
-@router.post("/asesoria/crearAsesoria", response_model=CrearAsesoria, name="crearAsesoria")
+@router.post("/asesoria/crearAsesoria", name="crearAsesoria")
 def crear_Asesoria(body:CrearAsesoria):
     return crearAsesoria(body.model_dump())
 
