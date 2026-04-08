@@ -51,21 +51,28 @@ def estadisticas_asesorias():
 
 def mostrar_Toma():
     try:
-        res = _table().select("*, asesoria(*, materia(*)), asesor(*, usuario(*)), alumno(*, usuario(*))").execute()
+        res = _table().select(
+            "*, asesoria(*, materia(*)), asesor!toma_id_asesor3_fkey(*, usuario!asesor_id_usuario2_fkey(*)), alumno!toma_id_alumno1_fkey(*, usuario!alumno_id_usuario1_fkey(*))"
+        ).execute()
         return {"items": res.data if res.data else []}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al obtener tomas: {e}")
 
 def buscar_TomaAsesor(id_asesor:int):
     try:
-        res = _table().select("*, asesoria(*, materia(*)), asesor(*, usuario(*)), alumno(*, usuario(*))").eq("id_asesor3", id_asesor).execute()
+        res = _table().select(
+            "*, asesoria(*, materia(*)), asesor(*, usuario(*)), alumno(*, usuario(*))"
+        ).eq("id_asesor3", id_asesor).execute()
+        print("DATA TOMA:", res.data)
         return {"items": res.data if res.data else []}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al obtener tomas del asesor: {e}")
-
+    
 def buscar_TomaAlumno(id_alumno:int):
     try:
-        res = _table().select("*, asesoria(*, materia(*)), asesor(*, usuario(*)), alumno(*, usuario(*))").eq("id_alumno2", id_alumno).execute()
+        res = _table().select(
+            "*, asesoria(*, materia(*)), asesor(*, usuario(*)), alumno(*, usuario(*))"
+        ).eq("id_alumno1", id_alumno).execute()
         return {"items": res.data if res.data else []}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al obtener tomas del alumno: {e}")
@@ -75,4 +82,4 @@ def buscar_TomaAsesoria(id_asesoria:int):
         res = _table().select("*, asesoria(*, materia(*)), asesor(*, usuario(*)), alumno(*, usuario(*))").eq("id_asesoria2", id_asesoria).execute()
         return {"items": res.data if res.data else []}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error al obtener la toma de la asesoria: {e}")
+        raise HTTPException(status_code=500, detail=f"Error al obtener la toma de la asesoria: {e}")

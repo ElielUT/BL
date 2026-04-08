@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Path, Query
+from app.core.supabase_client import get_supabase
+from app.core.config import config
 from app.models.asesoria import ActualizarAsesoria, CrearAsesoria, ListaAsesoria, SoloAsesoria
 from app.models.toma import CrearToma, ListaToma, EstadisticasToma
 from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, ListaUsuario, SoloUsuario, CantidadUsuarios
@@ -201,11 +203,11 @@ def obtener_estadisticas_toma():
 def endpoint_mostrar_Toma():
     return mostrar_Toma()
 
-@router.get("/toma/buscarTomaAsesor/{id_asesor}", response_model=ListaToma, name="buscarTomaAsesor")
+@router.get("/toma/buscarTomaAsesor/{id_asesor}", name="buscarTomaAsesor")
 def endpoint_buscar_TomaAsesor(id_asesor:int):
     return buscar_TomaAsesor(id_asesor)
 
-@router.get("/toma/buscarTomaAlumno/{id_alumno}", response_model=ListaToma, name="buscarTomaAlumno")
+@router.get("/toma/buscarTomaAlumno/{id_alumno}", name="buscarTomaAlumno")
 def endpoint_buscar_TomaAlumno(id_alumno:int):
     return buscar_TomaAlumno(id_alumno)
 
@@ -221,6 +223,20 @@ def endpoint_detalles_asesoria(id_asesoria: int):
 def endpoint_generar_meet(id_asesor3: int, id_asesoria1: int, id_alumno1: int):
     meet_link = crear_meet_link()
     return guardar_meet_link(id_asesor3, id_asesoria1, id_alumno1, meet_link)
+
+@router.put("/toma/actualizarEstado/{id_asesor3}/{id_asesoria1}/{id_alumno1}", name="actualizarEstadoToma")
+def endpoint_actualizar_estado(id_asesor3: int, id_asesoria1: int, id_alumno1: int, body: dict):
+    try:
+        sb = get_supabase()
+        res = sb.schema(config.supabase_schema).table(config.supabase_toma)\
+            .update({"estado": body.get("estado")})\
+            .eq("id_asesor3", id_asesor3)\
+            .eq("id_asesoria1", id_asesoria1)\
+            .eq("id_alumno1", id_alumno1)\
+            .execute()
+        return {"success": True, "data": res.data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al actualizar estado: {e}")
 
 """
 Routes de Asesoria
@@ -248,6 +264,7 @@ def desvincular_Asesor_Materia(id_materia:int, id_asesor:int):
 @router.post("/impartir", response_model=CrearImpartir, name="crearImpartir")
 def crear_Impartir(body:CrearImpartir):
     return asignar_impartir_db(body.model_dump())
+
 # ------------ RUTAS DE DISPONIBILIDAD ---------------------------------
 # Obtener la disponibilidad de un asesor
 @router.get("/disponibilidad/{id_asesor}", name="obtenerDisponibilidad")
@@ -309,3 +326,24 @@ async def actualizar_alumno_foraneo(id_usuario: int, datos: dict):
         raise HTTPException(status_code=404, detail="No se pudo actualizar el alumno o no existe")
     return {"message": "Alumno actualizado exitosamente", "id": id_usuario}
 #------------------------------------------------------------------------
+
+
+@router.delete("/toma/cancelar/{id_asesor3}/{id_asesoria1}/{id_alumno1}", name="cancelarToma")
+def endpoint_cancelar_toma(id_asesor3: int, id_asesoria1: int, id_alumno1: int):
+    try:
+        sb = get_supabase()
+        # 1. Borrar la toma
+        sb.schema(config.supabase_schema).table(config.supabase_toma)\
+            .delete()\
+            .eq("id_asesor3", id_asesor3)\
+            .eq("id_asesoria1", id_asesoria1)\
+            .eq("id_alumno1", id_alumno1)\
+            .execute()
+        # 2. Borrar la asesoria
+        sb.schema(config.supabase_schema).table(config.supabase_asesoria)\
+            .delete()\
+            .eq("id_asesoria", id_asesoria1)\
+            .execute()
+        return {"success": True}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al cancelar: {e}")

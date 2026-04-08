@@ -18,11 +18,7 @@ def _calcular_duracion(hora_in: str, hora_fin: str):
         return None
 
 def _determinar_estado(toma: dict) -> str:
-    if toma.get("calificacion") and toma["calificacion"] > 0:
-        return "completada"
-    if toma.get("fecha"):
-        return "aceptada"
-    return "pendiente"
+    return toma.get("estado") or "pendiente"
 
 def obtener_detalles_asesoria(id_asesoria: int) -> dict:
     try:
