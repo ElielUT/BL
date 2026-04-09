@@ -14,7 +14,6 @@ class CrearUsuario(BaseModel):
 class ActualizarUsuario(BaseModel):
     nombres:str | None = Field(default=None, max_length=30)
     apellidos:str | None = Field(default=None, max_length=30)
-    contraseña:str | None = Field(default=None)
     categoria:str | None = Field(default=None, max_length=15)
     cuatrimestre:int | None = Field(default=None, le=11, ge=1)
     plantel:str | None = Field(default=None, max_length=10)
@@ -27,6 +26,9 @@ class RecuperarUsuarios(BaseModel):
     categoria:str
     cuatrimestre:int
     plantel:str
+
+class CambiarContraseña(BaseModel):
+    contraseña:str
 
 class IniciarUsuario(BaseModel):
     correo:str

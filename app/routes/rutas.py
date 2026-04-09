@@ -3,10 +3,10 @@ from app.core.supabase_client import get_supabase
 from app.core.config import config
 from app.models.asesoria import ActualizarAsesoria, CrearAsesoria, ListaAsesoria, SoloAsesoria
 from app.models.toma import CrearToma, ListaToma, EstadisticasToma
-from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, ListaUsuario, SoloUsuario, CantidadUsuarios
+from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, ListaUsuario, SoloUsuario, CantidadUsuarios, CambiarContraseña
 from app.service.disponibilidad_service import obtenerDisponibilidadPorAsesor, crearDisponibilidad
 from app.models.disponibilidad import CrearDisponibilidad
-from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios, buscarUsuarioID, cantidadUsuarios
+from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios, buscarUsuarioID, cantidadUsuarios, cambiarContraseña
 from app.models.asesor import CrearAsesor, ActualizarAsesor, ListaAsesor, SoloAsesor 
 from app.service.asesor_service import eliminarAsesor, crearAsesor, actualizarAsesor, listarAsesores, buscarAsesorPorMateria, buscarAsesorPorAsesorNombre, buscarAsesorPorAsesorID, eliminarAsesorForaneo, actualizarAsesorForaneo
 from app.service.encryptar import descifrar
@@ -117,6 +117,10 @@ def buscar_UsuarioID(id_usuario:int):
 @router.get("/usuarios/cantidadUsuarios", response_model=CantidadUsuarios, name="cantidadUsuarios")
 def cantidad_Usuarios():
     return cantidadUsuarios()
+
+@router.put("/usuarios/cambiarContraseña/{id_usuario}", name="cambiarContraseña")
+def cambiar_Contraseña(id_usuario:int, body:CambiarContraseña):
+    return cambiarContraseña(id_usuario, body.model_dump(exclude_none=True))
 
 """
 Routes de Asesores
@@ -252,6 +256,16 @@ def eliminar_Asesoria(id_asesoria:int):
 @router.put("/asesoria/actualizarAsesoria/{id_asesoria}", response_model=ActualizarAsesoria, name="actualizarAsesoria")
 def actualizar_Asesoria(id_asesoria:int, body:ActualizarAsesoria):
     return actualizarAsesoria(id_asesoria, body.model_dump(exclude_none=True))
+
+@router.get("/asesoria/mostrarAsesoria", name="mostrarAsesoria")
+def endpoint_mostrar_Asesoria():
+    from app.service.asesoria_service import mostrar_asesoria_supervisar
+    return mostrar_asesoria_supervisar()
+
+@router.get("/asesoria/estadisticas", name="estadisticasAsesoria")
+def endpoint_estadisticas_asesoria():
+    from app.service.asesoria_service import estadisticas_asesoria_supervisar
+    return estadisticas_asesoria_supervisar()
 
 @router.delete("/impartir/{id_impartir}", name="eliminarImpartir")
 def eliminar_Impartir(id_impartir:int):

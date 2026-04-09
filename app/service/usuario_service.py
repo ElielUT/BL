@@ -73,48 +73,6 @@ def actualizarUsuario(id:int, datos:dict):
     try:
         if not datos or not id:
             raise HTTPException(status_code=404, detail="Datos incompletos")
-        
-        sb = get_supabase()
-
-        if "contraseña" in datos:
-            cnc = datos["contraseña"]
-            cc = cifrar(cnc)
-            datos["contraseña"] = cc.decode() if isinstance(cc, bytes) else cc
-            
-            # 1. Obtener correo
-            res_correo = _table().select("correo").eq("id_usuario", int(id)).execute()
-            if res_correo.data:
-                correo_usuario = res_correo.data[0].get("correo")
-                
-                # 2. Buscar uuid en auth
-                page = 1
-                user_uuid = None
-                while True:
-                    user_list = sb.auth.admin.list_users(page=page, per_page=100)
-                    users_array = getattr(user_list, 'users', user_list) 
-                    
-                    if not users_array or len(users_array) == 0:
-                        break
-                        
-                    for u in users_array:
-                        if isinstance(u, dict) and u.get("email") == correo_usuario:
-                            user_uuid = u.get("id")
-                            break
-                        elif hasattr(u, "email") and u.email == correo_usuario:
-                            user_uuid = u.id
-                            break
-                            
-                    if user_uuid or len(users_array) < 100:
-                        break
-                    page += 1
-                    
-                # 3. Actualizar password en Supabase Auth
-                if user_uuid:
-                    try:
-                        sb.auth.admin.update_user_by_id(user_uuid, {"password": cnc})
-                    except TypeError:
-                        # Fallback for some gotrue versions taking attributes as kwarg
-                        sb.auth.admin.update_user_by_id(uid=user_uuid, attributes={"password": cnc})
 
         datos = jsonable_encoder(datos)
         res = _table().update(datos).eq("id_usuario", int(id)).execute()
@@ -216,3 +174,56 @@ def cantidadUsuarios():
         return {"Total":total.count, "Asesorados":asesorados.count, "Asesores":asesores.count, "Administradores":administradores.count}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al contar usuarios {e}")
+
+def cambiarContraseña(id:int, datos:dict):
+    try:
+        if not datos or not id:
+            raise HTTPException(status_code=404, detail="Datos incompletos")
+        
+        sb = get_supabase()
+
+        if "contraseña" in datos:
+            cnc = datos["contraseña"]
+            cc = cifrar(cnc)
+            datos["contraseña"] = cc.decode() if isinstance(cc, bytes) else cc
+            
+            # 1. Obtener correo
+            res_correo = _table().select("correo").eq("id_usuario", int(id)).execute()
+            if res_correo.data:
+                correo_usuario = res_correo.data[0].get("correo")
+                
+                # 2. Buscar uuid en auth
+                page = 1
+                user_uuid = None
+                while True:
+                    user_list = sb.auth.admin.list_users(page=page, per_page=100)
+                    users_array = getattr(user_list, 'users', user_list) 
+                    
+                    if not users_array or len(users_array) == 0:
+                        break
+                        
+                    for u in users_array:
+                        if isinstance(u, dict) and u.get("email") == correo_usuario:
+                            user_uuid = u.get("id")
+                            break
+                        elif hasattr(u, "email") and u.email == correo_usuario:
+                            user_uuid = u.id
+                            break
+                            
+                    if user_uuid or len(users_array) < 100:
+                        break
+                    page += 1
+                    
+                # 3. Actualizar password en Supabase Auth
+                if user_uuid:
+                    try:
+                        sb.auth.admin.update_user_by_id(user_uuid, {"password": cnc})
+                    except TypeError:
+                        # Fallback for some gotrue versions taking attributes as kwarg
+                        sb.auth.admin.update_user_by_id(uid=user_uuid, attributes={"password": cnc})
+
+        datos = jsonable_encoder(datos)
+        res = _table().update(datos).eq("id_usuario", int(id)).execute()
+        return {"items":res.data[0] if res.data else None}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al actualizar usuario: {e}")
