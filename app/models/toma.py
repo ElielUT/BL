@@ -11,6 +11,7 @@ class CrearToma(BaseModel):
     hora_in: Optional[time] = None
     hora_fin: Optional[time] = None
     calificacion: Optional[float] = Field(default=0, ge=0, le=5)
+    id_horario: Optional[int] = None
 
 class RecuperarToma(BaseModel):
     id_asesor3: int
@@ -20,6 +21,7 @@ class RecuperarToma(BaseModel):
     hora_in: Optional[time] = None
     hora_fin: Optional[time] = None
     calificacion: Optional[float] = None
+    id_horario: Optional[int] = None
 
 class ListaToma(BaseModel):
     items:list[RecuperarToma]

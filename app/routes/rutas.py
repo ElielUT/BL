@@ -361,3 +361,16 @@ def endpoint_cancelar_toma(id_asesor3: int, id_asesoria1: int, id_alumno1: int):
         return {"success": True}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al cancelar: {e}")
+    
+
+@router.put("/disponibilidad/actualizarDisponible/{id_horario}", name="actualizarDisponible")
+def actualizar_disponible(id_horario: int, body: dict):
+    try:
+        sb = get_supabase()
+        res = sb.schema(config.supabase_schema).table(config.supabase_horario)\
+            .update({"disponible": body.get("disponible")})\
+            .eq("id_horario", id_horario)\
+            .execute()
+        return {"success": True}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al actualizar disponibilidad: {e}")
