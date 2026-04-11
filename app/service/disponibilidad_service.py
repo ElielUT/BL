@@ -13,40 +13,38 @@ def crearDisponibilidad(data: dict):
         if not data:
             raise HTTPException(status_code=400, detail="Datos incompletos")
 
-        # 1. VALIDACIÓN DE DUPLICADOS: 
-        # Verificamos si este asesor ya registró este bloque específico.
-        # Convertimos dia y hora a string para la comparación en Supabase.
-        existente = _table().select("*") \
+        hora_in_nueva = str(data.get("hora_in"))
+        hora_fin_nueva = str(data.get("hora_fin"))
+
+        # Verificar solapamiento con horarios existentes del mismo día
+        existentes = _table().select("*") \
             .eq("id_asesor1", data.get("id_asesor1")) \
             .eq("dia", str(data.get("dia"))) \
-            .eq("hora_in", str(data.get("hora_in"))) \
             .execute()
 
-        if existente.data:
-            raise HTTPException(
-                status_code=400, 
-                detail=f"El asesor ya tiene este horario registrado (Día: {data.get('dia')}, Hora: {data.get('hora_in')})"
-            )
+        for h in (existentes.data or []):
+            hora_in_ex = str(h.get("hora_in"))
+            hora_fin_ex = str(h.get("hora_fin"))
+            # Hay solapamiento si el nuevo horario se intersecta con alguno existente
+            if hora_in_nueva < hora_fin_ex and hora_fin_nueva > hora_in_ex:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"El horario se solapa con uno existente ({hora_in_ex[:5]} - {hora_fin_ex[:5]})"
+                )
 
-        # 2. INSERCIÓN:
-        # jsonable_encoder asegura que los datos estén en un formato compatible con JSON 
         data_json = jsonable_encoder(data)
         res = _table().insert(data_json).execute()
-        
-        # Retornar el registro creado
         return {"items": res.data[0] if res.data else None}
 
     except HTTPException as he:
-        # Re-lanza los errores de validación
         raise he
     except Exception as e:
-        # Errores inesperados de conexión o base de datos
         raise HTTPException(status_code=500, detail=f"Error al crear disponibilidad: {str(e)}")
 
 def obtenerDisponibilidadPorAsesor(id_asesor: int):
     try:
         # Busca la columna de id_asesor1 que coincida con el id_asesor proporcionado
-        res = _table().select("*").eq("id_asesor1", int(id_asesor)).execute()
+        res = _table().select("*").eq("id_asesor1", int(id_asesor)).order("dia").order("hora_in").execute()
         
         if not res.data:
             return {"items": [], "message": "No se encontró disponibilidad para este asesor"}

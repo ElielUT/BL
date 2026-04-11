@@ -374,3 +374,15 @@ def actualizar_disponible(id_horario: int, body: dict):
         return {"success": True}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al actualizar disponibilidad: {e}")
+    
+@router.delete("/disponibilidad/eliminarDisponibilidad/{id_horario}", name="eliminarDisponibilidad")
+def eliminar_disponibilidad(id_horario: int):
+    try:
+        sb = get_supabase()
+        res = sb.schema(config.supabase_schema).table(config.supabase_horario)\
+            .delete()\
+            .eq("id_horario", id_horario)\
+            .execute()
+        return {"success": True}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al eliminar disponibilidad: {e}")

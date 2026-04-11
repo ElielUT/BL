@@ -68,6 +68,7 @@ def obtener_detalles_asesoria(id_asesoria: int) -> dict:
             "meet_link":        t.get("meet_link"),
             "calificacion":     t.get("calificacion"),
             "estado":           _determinar_estado(t),
+            "id_horario":       t.get("id_horario"),
         }
     
     except HTTPException:
