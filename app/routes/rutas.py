@@ -232,15 +232,20 @@ def endpoint_generar_meet(id_asesor3: int, id_asesoria1: int, id_alumno1: int):
 def endpoint_actualizar_estado(id_asesor3: int, id_asesoria1: int, id_alumno1: int, body: dict):
     try:
         sb = get_supabase()
+        datos = {}
+        if "estado" in body:
+            datos["estado"] = body["estado"]
+        if "calificacion" in body:
+            datos["calificacion"] = body["calificacion"]
         res = sb.schema(config.supabase_schema).table(config.supabase_toma)\
-            .update({"estado": body.get("estado")})\
+            .update(datos)\
             .eq("id_asesor3", id_asesor3)\
             .eq("id_asesoria1", id_asesoria1)\
             .eq("id_alumno1", id_alumno1)\
             .execute()
         return {"success": True, "data": res.data}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error al actualizar estado: {e}")
+        raise HTTPException(status_code=500, detail=f"Error al actualizar: {e}")
 
 """
 Routes de Asesoria
@@ -386,3 +391,55 @@ def eliminar_disponibilidad(id_horario: int):
         return {"success": True}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al eliminar disponibilidad: {e}")
+    
+@router.post("/toma/registrar/{id_asesor3}/{id_asesoria1}/{id_alumno1}", name="registrarToma")
+def endpoint_registrar_toma(id_asesor3: int, id_asesoria1: int, id_alumno1: int):
+    try:
+        from datetime import datetime
+        sb = get_supabase()
+        
+        # Obtener la toma
+        res = sb.schema(config.supabase_schema).table(config.supabase_toma)\
+            .select("*")\
+            .eq("id_asesor3", id_asesor3)\
+            .eq("id_asesoria1", id_asesoria1)\
+            .eq("id_alumno1", id_alumno1)\
+            .single()\
+            .execute()
+        
+        if not res.data:
+            raise HTTPException(status_code=404, detail="Toma no encontrada")
+        
+        toma = res.data
+        fecha = toma.get("fecha")
+        hora_fin = toma.get("hora_fin")
+        
+        if not fecha or not hora_fin:
+            raise HTTPException(status_code=400, detail="La asesoría no tiene fecha u hora registrada")
+        
+        # Verificar que ya pasó la fecha y hora
+        fecha_hora_fin = datetime.strptime(f"{fecha} {hora_fin}", "%Y-%m-%d %H:%M:%S")
+        if datetime.now() < fecha_hora_fin:
+            raise HTTPException(status_code=400, detail="La asesoría aún no ha terminado")
+        
+        # Cambiar estado a completada
+        sb.schema(config.supabase_schema).table(config.supabase_toma)\
+            .update({"estado": "completada"})\
+            .eq("id_asesor3", id_asesor3)\
+            .eq("id_asesoria1", id_asesoria1)\
+            .eq("id_alumno1", id_alumno1)\
+            .execute()
+        
+        # Liberar el slot del horario si existe
+        id_horario = toma.get("id_horario")
+        if id_horario:
+            sb.schema(config.supabase_schema).table(config.supabase_horario)\
+                .update({"disponible": True})\
+                .eq("id_horario", id_horario)\
+                .execute()
+        
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al registrar toma: {e}")
