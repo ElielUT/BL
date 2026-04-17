@@ -1,19 +1,23 @@
-from fastapi import APIRouter, Path, Query
+#FastAPI y Supabase
+from fastapi import APIRouter, Path, HTTPException
 from app.core.supabase_client import get_supabase
 from app.core.config import config
+#Models
 from app.models.asesoria import ActualizarAsesoria, CrearAsesoria, ListaAsesoria, SoloAsesoria
 from app.models.toma import CrearToma, ListaToma, EstadisticasToma
 from app.models.usuario import CrearUsuario, ActualizarUsuario, IniciarUsuario, ListaUsuario, SoloUsuario, CantidadUsuarios, CambiarContraseña
-from app.service.disponibilidad_service import obtenerDisponibilidadPorAsesor, crearDisponibilidad
 from app.models.disponibilidad import CrearDisponibilidad
-from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios, buscarUsuarioID, cantidadUsuarios, cambiarContraseña
 from app.models.asesor import CrearAsesor, ActualizarAsesor, ListaAsesor, SoloAsesor 
+from app.models.disponibilidad import CrearDisponibilidad
+from app.models.materia import CrearMateria, RecuperarMateria, CrearImpartir, RecuperarImpartir
+from app.models.alumnos import CrearAlumno, ActualizarAlumno, RecuperarAlumno, ListaAlumnos, SoloAlumno
+from app.models.toma import ActualizarMeetLink
+#Services
+from app.service.disponibilidad_service import obtenerDisponibilidadPorAsesor, crearDisponibilidad
+from app.service.usuario_service import inicio, crearUsuario, eliminarUsuario, actualizarUsuario, listarUsuarios, buscarUsuarios, buscarUsuarioID, cantidadUsuarios, cambiarContraseña
 from app.service.asesor_service import eliminarAsesor, crearAsesor, actualizarAsesor, listarAsesores, buscarAsesorPorMateria, buscarAsesorPorAsesorNombre, buscarAsesorPorAsesorID, eliminarAsesorForaneo, actualizarAsesorForaneo
 from app.service.encryptar import descifrar
-from app.models.disponibilidad import CrearDisponibilidad
 from app.service.disponibilidad_service import obtenerDisponibilidadPorAsesor, crearDisponibilidad
-#from app.core.supabase_client import get_db
-from app.models.materia import CrearMateria, RecuperarMateria, CrearImpartir, RecuperarImpartir
 from app.service.materia_service import (
     crear_materia_db,
     asignar_impartir_db,
@@ -27,8 +31,6 @@ from app.service.materia_service import (
     eliminar_impartir_db,
     desvincular_asignacion_db
 )
-from fastapi import APIRouter, HTTPException
-from app.models.alumnos import CrearAlumno, ActualizarAlumno, RecuperarAlumno, ListaAlumnos, SoloAlumno
 from app.service.alumno_service import (
     crearAlumno, 
     actualizarAlumno, 
@@ -38,13 +40,12 @@ from app.service.alumno_service import (
     listarAlumnos, 
     buscarAlumnoPorID
 )
-
 # Importaciones para las rutas de Toma y Asesoría
 from app.service.toma_service import crearToma, estadisticas_asesorias, mostrar_Toma, buscar_TomaAsesor, buscar_TomaAlumno, buscar_TomaAsesoria
 from app.service.asesoria_service import crearAsesoria, eliminarAsesoria, actualizarAsesoria
 from app.service.detalles_service import obtener_detalles_asesoria, guardar_meet_link
 from app.service.meet_service import crear_meet_link
-from app.models.toma import ActualizarMeetLink
+
 
 router = APIRouter()
 
