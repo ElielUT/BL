@@ -47,7 +47,7 @@ async def borrar_asesor(id_asesor: int):
 
 @router.put("/actualizarAsesorForaneo/{id_usuario}")
 async def actualizar_asesor_foraneo(id_usuario: int, datos: dict):
-    res = actualizarAsesorForaneo(id_usuario, datos.get("carrera"))
+    res = actualizarAsesorForaneo(id_usuario, datos.get("carrera"), datos.get("categoria"))
     if not res or not res.get("items"):
         raise HTTPException(status_code=404, detail="No se pudo actualizar el asesor o no existe")
     return {"message": "Asesor actualizado exitosamente", "id": id_usuario}

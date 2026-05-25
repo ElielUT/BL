@@ -153,7 +153,7 @@ def buscarUsuarioID(id:int):
         carrera_data = None
         
         if usuario.get("categoria") == "asesor":
-            res2 = _table2().select("carrera").eq("id_usuario2", int(id)).execute()
+            res2 = _table2().select("carrera, categoria").eq("id_usuario2", int(id)).execute()
             if res2.data:
                 carrera_data = res2.data[0]
         elif usuario.get("categoria") == "asesorado":

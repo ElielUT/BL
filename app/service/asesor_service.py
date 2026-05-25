@@ -51,11 +51,16 @@ def eliminarAsesorForaneo(id:int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al eliminar el Asesor {e}")
 
-def actualizarAsesorForaneo(id:int, carrera:str):
+def actualizarAsesorForaneo(id:int, carrera:str, categoria:str = None):
     try:
-        if not id or not carrera:
+        if not id:
             raise HTTPException(status_code=404, detail="Datos incompletos")
-        res = _table().update({"carrera": carrera}).eq("id_usuario2", int(id)).execute()
+        update_data = {}
+        if carrera is not None:
+            update_data["carrera"] = carrera
+        if categoria is not None:
+            update_data["categoria"] = categoria
+        res = _table().update(update_data).eq("id_usuario2", int(id)).execute()
         return {"items":res.data[0] if res.data else None}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al actualizar el Asesor {e}")
