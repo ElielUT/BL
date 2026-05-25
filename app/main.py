@@ -26,6 +26,7 @@ app.include_router(rutas.router)
 
 # Activar entorno virtual
 # Windows: venv\Scripts\activate
+# Linux: source venv/bin/activate
 
 # Salir del entorno virtual
 # deactivate
